@@ -6,7 +6,7 @@ from sklearn.model_selection import KFold
 
 # Helper functions
 
-def stratify_points(tensor): # Make points 0 or 1 -- only for 3-way tensors
+def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
     for student in range(len(tensor)):
         for question in range(len(tensor[0])):
             for attempt in range(len(tensor[0][0])):
@@ -16,7 +16,7 @@ def stratify_points(tensor): # Make points 0 or 1 -- only for 3-way tensors
                     tensor[student][question][attempt] = 0
     return tensor
 
-def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_points):
+def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_points): # Reports train and test accuracy
 
     correct_test = 0
     correct_train = 0
@@ -39,7 +39,7 @@ def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_po
 
 # Load dataset into 3D array
 
-filename = "C:/Users/Julia/Documents/EDURangeHintsSimulator/3dg/origdata"
+filename = ""
 data = pd.read_csv(filename)
 # print(data.shape)
 
@@ -64,7 +64,7 @@ orig_present_points = np.array(np.where(orig_mask)).T
 
 ranks = range(1,5)
 train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
-kf = KFold(n_splits=20, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but you can sometimes get around it by using high n_splits
+kf = KFold(n_splits=30, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but you can sometimes get around it by using high n_splits
 stratify = True # Set this to true if you want results to have the data round to zeros or ones (will also print the accuracy)
 
 for train_indices, test_indices in kf.split(orig_present_points):
@@ -72,6 +72,14 @@ for train_indices, test_indices in kf.split(orig_present_points):
     # Create train tensors
     train_tensor = np.copy(data_tensor)
 
+    # Optional: assume if student got it right, they get it right every subsequent attempt (rather than empty value)
+    for student in train_tensor:
+        for question in student:
+            for attempt_index in range(len(question)):
+                if question[attempt_index] == 1:
+                    question[attempt_index:] = [1 for _ in question[attempt_index:]]
+                    break
+    
     # Fill in train tensor with NaNs where the test values are
     for test_index in test_indices:
         tensor_index = orig_present_points[test_index]
@@ -83,11 +91,14 @@ for train_indices, test_indices in kf.split(orig_present_points):
     # Test on different ranks
     for rank in ranks:
 
-        weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=0.07)
+        weights, factors = parafac(train_tensor, rank=rank, mask=mask)
         reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
-        reconstructed_tensor = stratify_points(reconstructed_tensor) # This line is optional -- depends on whether you want decimal approximations or reformat to just ones and zeros
+
 
         if stratify:
+
+            reconstructed_tensor = stratify_points(reconstructed_tensor) # This line is optional -- depends on whether you want decimal approximations or reformat to just ones and zeros
+            
             # Compute accuracy (only applicable when running stratifying_points, as the accuracy looks at whether the points are exactly equal)
             train_acc, test_acc = find_accuracy(data_tensor, reconstructed_tensor, test_indices, orig_present_points)
             train_accuracy[rank].append(train_acc)
