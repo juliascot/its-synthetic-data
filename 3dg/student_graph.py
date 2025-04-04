@@ -1,3 +1,9 @@
+'''
+Create graph to visualize the learning rates and prior knowledge of four different students.
+
+This is how I made one specific graph, but it can easily be modified to create others.
+'''
+
 import numpy as np
 import tensorly as tl
 import pandas as pd
@@ -14,7 +20,6 @@ l2 = 0
 # Helper function
 def power_law(x, a, b):
     return a * np.power(x, b)
-
 
 
 if __name__ == "__main__":
