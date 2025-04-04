@@ -12,6 +12,13 @@ from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
 from tensor import Tensor
 
+filename = "Getting_Started_Processed.csv"
+is_stratified = False # Set this to true if we want results to have the data round to zeros or ones (will also print the accuracy)
+ranks = range(1,10)
+l2 = 0 # Regularization -- basically to what degree we ignore potential outliers.
+n_splits = 30 # The k in k-fold cross-validation
+
+
 # Helper functions
 
 def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
@@ -44,16 +51,13 @@ def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_po
 
 
 
-filename = "Getting_Started_Processed.csv"
 initial_tensor = Tensor(filename)
 
 
 # Use K-fold cross-validation and ALS to factor the tensor for various ranks
 
-ranks = range(1,10)
 train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
-kf = KFold(n_splits=30, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but we can sometimes get around it by using high n_splits
-is_stratified = False # Set this to true if we want results to have the data round to zeros or ones (will also print the accuracy)
+kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but we can sometimes get around it by using high n_splits
 
 
 counter = 0
@@ -77,7 +81,7 @@ for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
     # Test on different ranks
     for rank in ranks:
 
-        weights, factors = parafac(train_tensor, rank=rank, mask=mask)
+        weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
         reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
 
