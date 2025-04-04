@@ -9,7 +9,7 @@ from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
 
 class Tensor:
-    def __init__(self, filename: str, rank: int, if_stratify: bool = False) -> None:
+    def __init__(self, filename: str) -> None:
 
         # Load dataset into 3D array
         data = pd.read_csv(filename)
