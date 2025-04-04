@@ -12,6 +12,7 @@ from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
 from tensor import Tensor
 
+
 filename = "Getting_Started_Processed.csv"
 is_stratified = False # Set this to true if we want results to have the data round to zeros or ones (will also print the accuracy)
 ranks = range(1,10)
@@ -51,76 +52,72 @@ def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_po
 
 
 
-initial_tensor = Tensor(filename)
+if __name__ == "__main__":
 
+    # Put the file into a tensor
+    initial_tensor = Tensor(filename)
 
-# Use K-fold cross-validation and ALS to factor the tensor for various ranks
+    # Use K-fold cross-validation and ALS to factor the tensor for various ranks
+    train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but we can sometimes get around it by using high n_splits
 
-train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
-kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but we can sometimes get around it by using high n_splits
+    counter = 0
+    for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
 
+        # Keep track of progress
+        print(f"Iteration {counter + 1} out of 30")
+        counter += 1
 
-counter = 0
-for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
-
-    # Keep track of progress
-    print(f"Iteration {counter + 1} out of 30")
-    counter += 1
-
-    # Create train tensor
-    train_tensor = np.copy(initial_tensor.data_tensor)
-    
-    # Fill in train tensor with NaNs where the test values are
-    for test_index in test_indices:
-        tensor_test_index = initial_tensor.orig_present_points[test_index]
-        train_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] = np.nan
-
-    mask = ~np.isnan(train_tensor)
-    train_tensor = np.nan_to_num(train_tensor)
-
-    # Test on different ranks
-    for rank in ranks:
-
-        weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
-        reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
-
-
-        if is_stratified:
-
-            reconstructed_tensor = stratify_points(reconstructed_tensor)
-            
-            # Compute accuracy (only applicable when running stratifying_points, as the accuracy looks at whether the points are exactly equal)
-            train_acc, test_acc = find_accuracy(initial_tensor.data_tensor, reconstructed_tensor, test_indices, initial_tensor.orig_present_points)
-            train_accuracy[rank].append(train_acc)
-            test_accuracy[rank].append(test_acc)
-
-
-
-        # Compute the errors
-        mse_train_values, mse_test_values = [], []
-
+        # Create train tensor
+        train_tensor = np.copy(initial_tensor.data_tensor)
+        
+        # Fill in train tensor with NaNs where the test values are
         for test_index in test_indices:
             tensor_test_index = initial_tensor.orig_present_points[test_index]
-            mse_test_values.append((initial_tensor.data_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]]) ** 2)
+            train_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] = np.nan
 
-        for train_index in train_indices:
-            tensor_test_index = initial_tensor.orig_present_points[train_index]
-            mse_train_values.append((initial_tensor.data_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]]) ** 2)
+        mask = ~np.isnan(train_tensor)
+        train_tensor = np.nan_to_num(train_tensor)
 
-        train_mse = np.mean(mse_train_values)
-        test_mse = np.mean(mse_test_values)
+        # Test on different ranks
+        for rank in ranks:
 
-        train_errors[rank].append(train_mse)
-        test_errors[rank].append(test_mse)
+            weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
+            reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
+            if is_stratified:
 
-if is_stratified:
-    average_train_accuracy = {rank: np.mean(accuracy) for rank, accuracy in train_accuracy.items()}
-    average_test_accuracy = {rank: np.mean(accuracy) for rank, accuracy in test_accuracy.items()}
-    print("Train accuracy: ", average_train_accuracy)
-    print("Test accuracy: ", average_test_accuracy)
+                reconstructed_tensor = stratify_points(reconstructed_tensor)
+                
+                # Compute accuracy (only applicable when running stratifying_points, as the accuracy looks at whether the points are exactly equal)
+                train_acc, test_acc = find_accuracy(initial_tensor.data_tensor, reconstructed_tensor, test_indices, initial_tensor.orig_present_points)
+                train_accuracy[rank].append(train_acc)
+                test_accuracy[rank].append(test_acc)
 
-average_train_error = {rank: np.mean(errors) for rank, errors in train_errors.items()}
-average_test_error = {rank: np.mean(errors) for rank, errors in test_errors.items()}
-print("Train errors: ", average_train_error)
-print("Test errors: ", average_test_error)
+            # Compute the errors
+            mse_train_values, mse_test_values = [], []
+
+            for test_index in test_indices:
+                tensor_test_index = initial_tensor.orig_present_points[test_index]
+                mse_test_values.append((initial_tensor.data_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]]) ** 2)
+
+            for train_index in train_indices:
+                tensor_test_index = initial_tensor.orig_present_points[train_index]
+                mse_train_values.append((initial_tensor.data_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]]) ** 2)
+
+            train_mse = np.mean(mse_train_values)
+            test_mse = np.mean(mse_test_values)
+
+            train_errors[rank].append(train_mse)
+            test_errors[rank].append(test_mse)
+
+    if is_stratified:
+        average_train_accuracy = {rank: np.mean(accuracy) for rank, accuracy in train_accuracy.items()}
+        average_test_accuracy = {rank: np.mean(accuracy) for rank, accuracy in test_accuracy.items()}
+        print("Train accuracy: ", average_train_accuracy)
+        print("Test accuracy: ", average_test_accuracy)
+
+    average_train_error = {rank: np.mean(errors) for rank, errors in train_errors.items()}
+    average_test_error = {rank: np.mean(errors) for rank, errors in test_errors.items()}
+    print("Train errors: ", average_train_error)
+    print("Test errors: ", average_test_error)
