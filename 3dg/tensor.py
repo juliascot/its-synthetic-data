@@ -1,5 +1,5 @@
 '''
-Tensor class. This will take in the csv file and desired rank of the tensor and process it
+Tensor class. This will take in the csv file and process it
 '''
 
 import numpy as np
