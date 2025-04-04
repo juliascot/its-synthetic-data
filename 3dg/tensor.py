@@ -5,8 +5,7 @@ Tensor class. This will take in the csv file and process it
 import numpy as np
 import tensorly as tl
 import pandas as pd
-from tensorly.decomposition import parafac
-from sklearn.model_selection import KFold
+
 
 class Tensor:
     def __init__(self, filename: str) -> None:
