@@ -9,7 +9,7 @@ import pandas as pd
 
 
 class Tensor:
-    def __init__(self, filename: str, is_student_outside: bool = False, augment: bool = False) -> None:
+    def __init__(self, filename: str, is_student_outside: bool = False, is_augmented: bool = False) -> None:
 
         # Load dataset into 3D array
         data = pd.read_csv(filename)
