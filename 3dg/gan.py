@@ -8,7 +8,14 @@ filename = "Getting_Started_Processed.csv"
 rank = 8
 l2 = 0
 
+# Decompose and reconstruct the tensor
+initial_tensor = Tensor(filename, is_student_outside=True)
 
+mask = ~np.isnan(initial_tensor.data_tensor)
+initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
+
+weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
+reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
 
 
