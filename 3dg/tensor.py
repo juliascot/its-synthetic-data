@@ -52,4 +52,16 @@ class Tensor:
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
 
     def augment(self, orig_data: np.ndarray) -> np.ndarray:
-        pass
+
+        augmented_data = np.copy(orig_data)
+
+        # add data where each attempt becomes right one earlier
+        
+        # add data where each attempt becomes right one later
+
+        # add data where each attempt becomes right two earlier
+
+        # add data where each attempt becomes right two later
+
+
+        return augmented_data
