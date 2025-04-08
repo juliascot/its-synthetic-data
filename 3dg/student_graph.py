@@ -23,6 +23,7 @@ def power_law(x, a, b):
 
 
 if __name__ == "__main__":
+    # Decompose and reconstruct the tensor
     initial_tensor = Tensor(filename, is_student_outside=True)
 
     mask = ~np.isnan(initial_tensor.data_tensor)
@@ -52,6 +53,7 @@ if __name__ == "__main__":
         all_extracted_info.append([extracted_info_a, extracted_info_b])
 
 
+    # Graph the extracted values
     plt.figure()
 
     interesting_students = [12, 24, 30, 27]
