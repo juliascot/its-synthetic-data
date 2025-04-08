@@ -46,4 +46,10 @@ class Tensor:
                         middle[attempt_index:] = [1 for _ in middle[attempt_index:]]
                         break
 
+        if is_student_outside and is_augmented:
+            shaped_data = self.augment(shaped_data)
+
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
+
+    def augment(self, orig_data: np.ndarray) -> np.ndarray:
+        pass
