@@ -3,6 +3,7 @@ import tensorly as tl
 import pandas as pd
 import matplotlib.pyplot as plt
 from tensorly.decomposition import parafac
+from tensor import Tensor
 
 filename = "Getting_Started_Processed.csv"
 rank = 8
