@@ -55,13 +55,12 @@ class Tensor:
 
         augmented_data = np.copy(orig_data)
 
-        # add data where each attempt becomes right one earlier
-        
-        # add data where each attempt becomes right one later
-
-        # add data where each attempt becomes right two earlier
-
-        # add data where each attempt becomes right two later
-
+        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, 1), axis=0)
+        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, -1), axis=0)
+        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, 2), axis=0)
+        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, -2), axis=0)
 
         return augmented_data
+    
+    def shift_attempts_earlier(self, orig_data: np.ndarray, shift_amount: int) -> np.ndarray:
+        pass
