@@ -10,8 +10,7 @@ rank = 8
 l2 = 0
 
 def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
-    # Decompose and reconstruct the tensor
-    initial_tensor = Tensor(filename, is_student_outside=True)
+    initial_tensor = Tensor(filename, is_student_outside=True, is_augmented=True)
 
     mask = ~np.isnan(initial_tensor.data_tensor)
     initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
