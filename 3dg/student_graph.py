@@ -25,13 +25,10 @@ def power_law(x, a, b):
 if __name__ == "__main__":
     initial_tensor = Tensor(filename, is_student_outside=True)
 
-    # Create train tensor
-    train_tensor = np.copy(initial_tensor.data_tensor)
+    mask = ~np.isnan(initial_tensor.data_tensor)
+    initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
 
-    mask = ~np.isnan(train_tensor)
-    train_tensor = np.nan_to_num(train_tensor)
-
-    weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
+    weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
     reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
     # Extract prior knowledge (a) and acquired knowledge (b)
