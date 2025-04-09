@@ -52,7 +52,6 @@ class Tensor:
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
 
     def augment(self, orig_data: np.ndarray) -> np.ndarray:
-
         augmented_data = np.copy(orig_data)
 
         augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, 1), axis=0)
@@ -63,4 +62,20 @@ class Tensor:
         return augmented_data
     
     def shift_attempts_earlier(self, orig_data: np.ndarray, shift_amount: int) -> np.ndarray:
-        pass
+        new_data = np.copy(orig_data)
+
+        for student in new_data:
+            for question in student:
+
+                if 1 not in question:
+                    continue
+
+                first_correct = question.index(1)
+                if shift_amount > 0:
+                    for attempt in range(first_correct - shift_amount, len(question)):
+                        attempt = 1
+                else:
+                    for attempt in range(first_correct + shift_amount, first_correct - shift_amount):
+                        attempt = 0
+    
+        return new_data
