@@ -72,7 +72,7 @@ class Tensor:
                 if 1 not in question: # continue if there are no correct answers
                     continue
 
-                first_correct = np.where(question == 1)[0]
+                first_correct = np.where(question == 1)[0][0]
                 if shift_amount > 0: # if positive shift, then insert 1's to the left
                     for attempt_index in range(np.max(first_correct - shift_amount, 0), first_correct):
                         question[attempt_index] = 1
