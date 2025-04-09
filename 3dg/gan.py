@@ -16,7 +16,14 @@ def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
 
     weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
-    return tl.kruskal_to_tensor((weights, factors))
+    reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
+
+    augmented_tensor = np.copy(reconstructed_tensor)
+    augmented_tensor = np.vstack((augmented_tensor, augmented_tensor * 0.95, augmented_tensor * 1.05))
+
+    return augmented_tensor
+
+print(create_dense_tensor(filename, rank, l2).shape)
 
 
 
