@@ -75,7 +75,7 @@ class Tensor:
                     for attempt_index in range(first_correct - shift_amount, len(question)):
                         question[attempt_index] = 1
                 else:
-                    for attempt_index in range(first_correct + shift_amount, first_correct - shift_amount):
+                    for attempt_index in range(first_correct + shift_amount, np.min(first_correct - shift_amount, len(question))):
                         question[attempt_index] = 0
     
         return new_data
