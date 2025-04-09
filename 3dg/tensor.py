@@ -55,10 +55,10 @@ class Tensor:
     def augment(self, orig_data: np.ndarray) -> np.ndarray:
         augmented_data = np.copy(orig_data)
 
-        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, 1))
-        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, -1))
-        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, 2))
-        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, -2))
+        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, 1)))
+        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, -1)))
+        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, 2)))
+        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, -2)))
 
         return augmented_data
     
@@ -74,10 +74,10 @@ class Tensor:
 
                 first_correct = np.where(question == 1)[0][0]
                 if shift_amount > 0: # if positive shift, then insert 1's to the left
-                    for attempt_index in range(np.max(first_correct - shift_amount, 0), first_correct):
+                    for attempt_index in range(max(first_correct - shift_amount, 0), first_correct):
                         question[attempt_index] = 1
                 else: # if negative shift, then insert 0's to the right
-                    for attempt_index in range(first_correct, np.min(first_correct - shift_amount, len(question))):
+                    for attempt_index in range(first_correct, min(first_correct - shift_amount, len(question))):
                         question[attempt_index] = 0
     
         return new_data
