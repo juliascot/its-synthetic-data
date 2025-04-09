@@ -51,6 +51,7 @@ class Tensor:
 
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
 
+
     def augment(self, orig_data: np.ndarray) -> np.ndarray:
         augmented_data = np.copy(orig_data)
 
@@ -60,6 +61,7 @@ class Tensor:
         augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, -2), axis=0)
 
         return augmented_data
+    
     
     def shift_attempts_earlier(self, orig_data: np.ndarray, shift_amount: int) -> np.ndarray:
         new_data = np.copy(orig_data)
