@@ -55,10 +55,10 @@ class Tensor:
     def augment(self, orig_data: np.ndarray) -> np.ndarray:
         augmented_data = np.copy(orig_data)
 
-        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, 1), axis=0)
-        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, -1), axis=0)
-        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, 2), axis=0)
-        augmented_data = np.concatenate(augmented_data, self.shift_attempts_earlier(orig_data, -2), axis=0)
+        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, 1))
+        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, -1))
+        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, 2))
+        augmented_data = np.append(augmented_data, self.shift_attempts_earlier(orig_data, -2))
 
         return augmented_data
     
