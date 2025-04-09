@@ -1,6 +1,6 @@
 '''
 Tensor class. This will take in the csv file (and optionally whether students or questions 
-are the outside axes)and process it
+are the outside axes) and process it
 '''
 
 import numpy as np
