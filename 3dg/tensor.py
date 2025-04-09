@@ -67,14 +67,14 @@ class Tensor:
         for student in new_data:
             for question in student:
 
-                if 1 not in question: # ignore if there are 
+                if 1 not in question: # continue if there are no correct answers
                     continue
 
                 first_correct = question.index(1)
-                if shift_amount > 0:
+                if shift_amount > 0: # if positive shift, then insert 1's to the left
                     for attempt_index in range(first_correct - shift_amount, len(question)):
                         question[attempt_index] = 1
-                else:
+                else: # if negative shift, then insert 0's to the right
                     for attempt_index in range(first_correct + shift_amount, np.min(first_correct - shift_amount, len(question))):
                         question[attempt_index] = 0
     
