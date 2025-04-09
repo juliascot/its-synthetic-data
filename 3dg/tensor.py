@@ -67,15 +67,15 @@ class Tensor:
         for student in new_data:
             for question in student:
 
-                if 1 not in question:
+                if 1 not in question: # ignore if there are 
                     continue
 
                 first_correct = question.index(1)
                 if shift_amount > 0:
-                    for attempt in range(first_correct - shift_amount, len(question)):
-                        attempt = 1
+                    for attempt_index in range(first_correct - shift_amount, len(question)):
+                        question[attempt_index] = 1
                 else:
-                    for attempt in range(first_correct + shift_amount, first_correct - shift_amount):
-                        attempt = 0
+                    for attempt_index in range(first_correct + shift_amount, first_correct - shift_amount):
+                        question[attempt_index] = 0
     
         return new_data
