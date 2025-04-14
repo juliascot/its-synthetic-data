@@ -109,3 +109,8 @@ def generate_slices(generator, num_slices, noise_dim=100):
         fake_slices = generator(z).numpy()
     return fake_slices
 
+
+
+if __name__ == "__main__":
+    augmented_tensor = create_dense_tensor(filename, rank, l2)
+    np.random.shuffle(augmented_tensor)
