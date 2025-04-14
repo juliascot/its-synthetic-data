@@ -1,6 +1,9 @@
 import numpy as np
 import tensorly as tl
 import pandas as pd
+import torch
+import torch.nn as nn
+import torch.optim as optim
 from tensorly.decomposition import parafac
 from tensor import Tensor
 
@@ -22,8 +25,87 @@ def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
 
     return augmented_tensor
 
-print(create_dense_tensor(filename, rank, l2).shape)
 
+# Assumes all slices are of shape (dim1, dim2)
+class Generator(nn.Module):
+    def __init__(self, noise_dim, slice_shape):
+        self.slice_shape = slice_shape
+        super().__init__()
+        self.output_dim = slice_shape[0] * slice_shape[1]
+        self.model = nn.Sequential(
+            nn.Linear(noise_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, self.output_dim),
+            nn.Sigmoid()
+        )
 
+    def forward(self, z):
+        out = self.model(z)
+        return out.view(-1, *self.slice_shape)
 
+class Discriminator(nn.Module):
+    def __init__(self, slice_shape):
+        super().__init__()
+        input_dim = slice_shape[0] * slice_shape[1]
+        self.model = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        return self.model(x)
+
+def train_gan(slices, noise_dim=100, epochs=1000, batch_size=32):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    slice_shape = slices.shape[1:]
+    generator = Generator(noise_dim, slice_shape).to(device)
+    discriminator = Discriminator(slice_shape).to(device)
+
+    criterion = nn.BCELoss()
+    optim_G = optim.Adam(generator.parameters(), lr=0.0002)
+    optim_D = optim.Adam(discriminator.parameters(), lr=0.0002)
+
+    data = torch.tensor(slices, dtype=torch.float32).to(device)
+
+    for epoch in range(epochs):
+        idx = torch.randint(0, data.size(0), (batch_size,))
+        real = data[idx]
+
+        # Labels
+        real_labels = torch.ones((batch_size, 1), device=device)
+        fake_labels = torch.zeros((batch_size, 1), device=device)
+
+        # --- Train Discriminator ---
+        z = torch.randn((batch_size, noise_dim), device=device)
+        fake = generator(z)
+
+        out_real = discriminator(real)
+        out_fake = discriminator(fake.detach())
+
+        loss_D = criterion(out_real, real_labels) + criterion(out_fake, fake_labels)
+        optim_D.zero_grad()
+        loss_D.backward()
+        optim_D.step()
+
+        # --- Train Generator ---
+        out_fake = discriminator(fake)
+        loss_G = criterion(out_fake, real_labels)  # Fool the discriminator
+        optim_G.zero_grad()
+        loss_G.backward()
+        optim_G.step()
+
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}, Loss D: {loss_D.item():.4f}, Loss G: {loss_G.item():.4f}")
+
+    return generator
+
+def generate_slices(generator, num_slices, noise_dim=100):
+    z = torch.randn((num_slices, noise_dim))
+    with torch.no_grad():
+        fake_slices = generator(z).numpy()
+    return fake_slices
 
