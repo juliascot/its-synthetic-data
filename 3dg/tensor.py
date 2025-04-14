@@ -32,7 +32,7 @@ class Tensor:
         shaped_data = np.full((num_outside, num_middle, num_attempts), np.nan)
 
         # Fill in with the data points
-        for row in range(len(data.index) - 2): # Subtract 2 to avoid header and start at 0
+        for row in range(len(data.index)): # Subtract 2 to avoid header and start at 0
             shaped_data[data[outside_id][row]-1][data[middle_id][row]-1][data['Attempt_Count'][row]-1] = data['Answer_Score'][row]
 
         self.orig_present_points = np.array(np.where(~np.isnan(shaped_data))).T # a 2D array of coordinates of data points that exist [[0 1 0] [3 28 17] ...]
