@@ -23,7 +23,7 @@ def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     augmented_tensor = np.copy(reconstructed_tensor)
     augmented_tensor = np.vstack((augmented_tensor, augmented_tensor * 0.95, augmented_tensor * 1.05))
 
-    return augmented_tensor
+    return 1 / (1 + np.exp(augmented_tensor))
 
 
 # Assumes all slices are of shape (dim1, dim2)
