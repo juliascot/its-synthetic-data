@@ -114,3 +114,10 @@ def generate_slices(generator, num_slices, noise_dim=100):
 if __name__ == "__main__":
     augmented_tensor = create_dense_tensor(filename, rank, l2)
     np.random.shuffle(augmented_tensor)
+
+    generator = train_gan(augmented_tensor)
+
+    synthetic_slices = generate_slices(generator, 4)
+
+    print((3 - np.log(1 / synthetic_slices - 1)) / 6)
+
