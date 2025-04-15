@@ -22,16 +22,7 @@ def power_law(x, a, b):
     return a * np.power(x, b)
 
 
-if __name__ == "__main__":
-    # Decompose and reconstruct the tensor
-    initial_tensor = Tensor(filename, is_student_outside=True)
-
-    mask = ~np.isnan(initial_tensor.data_tensor)
-    initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
-
-    weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
-    reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
-
+def extract_prior_and_acquired_knowledge(tensor: np.ndarray) -> list[list[float]]:
     # Extract prior knowledge (a) and acquired knowledge (b)
     all_extracted_info = []
 
@@ -52,6 +43,20 @@ if __name__ == "__main__":
         
         all_extracted_info.append([extracted_info_a, extracted_info_b])
 
+    return all_extracted_info
+
+
+if __name__ == "__main__":
+    # Decompose and reconstruct the tensor
+    initial_tensor = Tensor(filename, is_student_outside=True)
+
+    mask = ~np.isnan(initial_tensor.data_tensor)
+    initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
+
+    weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
+    reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
+
+    all_extracted_info = extract_prior_and_acquired_knowledge(reconstructed_tensor)
 
     # Graph the extracted values
     plt.figure()
