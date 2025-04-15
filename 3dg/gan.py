@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
 import tensorly as tl
 import pandas as pd
 import torch
@@ -8,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from tensorly.decomposition import parafac
 from tensor import Tensor
+from student_graph import extract_prior_and_acquired_knowledge
 
 filename = "Getting_Started_Processed.csv"
 rank = 8
@@ -20,10 +20,6 @@ def special_sigmoid(input: any) -> any:
 
 def special_sigmoid_inverse(input: any) -> any:
     return (3 - np.log(1 / input - 1)) / 6
-
-
-def power_law(x, a, b):
-    return a * np.power(x, b)
 
 
 def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
@@ -129,26 +125,8 @@ def generate_slices(generator, num_slices, noise_dim=100):
 
 
 def graph_student_slices(slices: np.ndarray, epochs: int) -> None:
-    # Extract prior knowledge (a) and acquired knowledge (b)
-    all_extracted_info = []
-
-    for student_num, student_matrix in enumerate(slices):
-
-        extracted_info_a = []
-        extracted_info_b = []
-
-        for question in student_matrix:
-
-            X = np.arange(1, len(question) + 1)
-
-            popt, pcov = curve_fit(power_law, X, question, p0=[1, 1], bounds=([0, 0], [1, 1]))
-
-            extracted_info_a.append(popt[0])
-            extracted_info_b.append(popt[1])
-
-        
-        all_extracted_info.append([extracted_info_a, extracted_info_b])
-
+    
+    all_extracted_info = extract_prior_and_acquired_knowledge(slices)
 
     # Graph the extracted values
     plt.figure()
