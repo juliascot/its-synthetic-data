@@ -26,7 +26,7 @@ def extract_prior_and_acquired_knowledge(tensor: np.ndarray) -> list[list[float]
     # Extract prior knowledge (a) and acquired knowledge (b)
     all_extracted_info = []
 
-    for student_num, student_matrix in enumerate(reconstructed_tensor):
+    for student_num, student_matrix in enumerate(tensor):
 
         extracted_info_a = []
         extracted_info_b = []
