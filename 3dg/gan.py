@@ -117,7 +117,8 @@ if __name__ == "__main__":
 
     generator = train_gan(augmented_tensor)
 
-    synthetic_slices = generate_slices(generator, 4)
+    synthetic_slices = generate_slices(generator, 1)
 
-    print((3 - np.log(1 / synthetic_slices - 1)) / 6)
+    print(f"Synthetic: {(3 - np.log(1 / synthetic_slices - 1)) / 6}")
+    print(f"Real slice: {(3 - np.log(1 / augmented_tensor[:1] - 1)) / 6}")
 
