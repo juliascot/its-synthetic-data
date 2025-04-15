@@ -11,6 +11,15 @@ filename = "Getting_Started_Processed.csv"
 rank = 8
 l2 = 0
 
+
+def special_sigmoid(input: any) -> any:
+    return 1 / (1 + np.exp(-6 * input + 3))
+
+
+def special_sigmoid_inverse(input: any) -> any:
+    return (3 - np.log(1 / input - 1)) / 6
+
+
 def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     initial_tensor = Tensor(filename, is_student_outside=True, is_augmented=True)
 
@@ -23,7 +32,7 @@ def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     augmented_tensor = np.copy(reconstructed_tensor)
     augmented_tensor = np.vstack((augmented_tensor, augmented_tensor * 0.95, augmented_tensor * 1.05))
 
-    return 1 / (1 + np.exp(-6 * augmented_tensor + 3))
+    return special_sigmoid(augmented_tensor)
 
 
 # Assumes all slices are of shape (dim1, dim2)
@@ -119,6 +128,6 @@ if __name__ == "__main__":
 
     synthetic_slices = generate_slices(generator, 1)
 
-    print(f"Synthetic: {(3 - np.log(1 / synthetic_slices - 1)) / 6}")
-    print(f"Real slice: {(3 - np.log(1 / augmented_tensor[:1] - 1)) / 6}")
+    print(f"Synthetic: {special_sigmoid_inverse(synthetic_slices)}")
+    print(f"Real slice: {special_sigmoid_inverse(augmented_tensor[:1][:1])}")
 
