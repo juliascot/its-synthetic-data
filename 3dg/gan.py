@@ -128,7 +128,7 @@ def generate_slices(generator, num_slices, noise_dim=100):
     return fake_slices
 
 
-def graph_student_slices(slices: np.ndarray) -> None:
+def graph_student_slices(slices: np.ndarray, epochs: int) -> None:
     # Extract prior knowledge (a) and acquired knowledge (b)
     all_extracted_info = []
 
@@ -156,8 +156,8 @@ def graph_student_slices(slices: np.ndarray) -> None:
     for student_num in range(len(slices)):
         plt.scatter(all_extracted_info[student_num-1][0], all_extracted_info[student_num-1][1])
 
-    plt.title('Across all questions',fontsize=8)
-    plt.suptitle(f'Students\' Learning Curves',fontsize=16, y=0.97)
+    plt.title(f'{len(slices)} Students, {epochs} Epochs',fontsize=8)
+    plt.suptitle(f'Generated Student Learning Curves',fontsize=16, y=0.97)
     plt.xlabel("$\t{a}$: prior knowledge")
     plt.ylabel("$\t{b}$: learning rate")
     plt.xlim(0, 1)
@@ -169,10 +169,13 @@ if __name__ == "__main__":
     augmented_tensor = create_dense_tensor(filename, rank, l2)
     np.random.shuffle(augmented_tensor)
 
-    generator = train_gan(augmented_tensor)
+    epochs = 1000
+    generator = train_gan(augmented_tensor, epochs=epochs)
 
-    synthetic_slices = generate_slices(generator, 1)
+    synthetic_slices = generate_slices(generator, 30)
 
-    print(f"Synthetic: {special_sigmoid_inverse(synthetic_slices)}")
-    print(f"Real slice: {special_sigmoid_inverse(augmented_tensor[:1][:1])}")
+    graph_student_slices(synthetic_slices, epochs)
+
+    # print(f"Synthetic: {special_sigmoid_inverse(synthetic_slices)}")
+    # print(f"Real slice: {special_sigmoid_inverse(augmented_tensor[:1][:1])}")
 
