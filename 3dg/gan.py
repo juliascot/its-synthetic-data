@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import tensorly as tl
 import pandas as pd
 import torch
@@ -121,6 +122,42 @@ def generate_slices(generator, num_slices, noise_dim=100):
         fake_slices = generator(z).numpy()
     return fake_slices
 
+
+def graph_student_slices(slices: np.ndarray) -> None:
+    # Extract prior knowledge (a) and acquired knowledge (b)
+    all_extracted_info = []
+
+    for student_num, student_matrix in enumerate(slices):
+
+        extracted_info_a = []
+        extracted_info_b = []
+
+        for question in student_matrix:
+
+            X = np.arange(1, len(question) + 1)
+
+            popt, pcov = curve_fit(power_law, X, question, p0=[1, 1], bounds=([0, 0], [1, 1]))
+
+            extracted_info_a.append(popt[0])
+            extracted_info_b.append(popt[1])
+
+        
+        all_extracted_info.append([extracted_info_a, extracted_info_b])
+
+
+    # Graph the extracted values
+    plt.figure()
+
+    for student_num in range(len(slices)):
+        plt.scatter(all_extracted_info[student_num-1][0], all_extracted_info[student_num-1][1])
+
+    plt.title('Across all questions',fontsize=8)
+    plt.suptitle(f'Students\' Learning Curves',fontsize=16, y=0.97)
+    plt.xlabel("$\t{a}$: prior knowledge")
+    plt.ylabel("$\t{b}$: learning rate")
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.show()
 
 
 if __name__ == "__main__":
