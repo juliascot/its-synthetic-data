@@ -52,6 +52,7 @@ class Generator(nn.Module):
         out = self.model(z)
         return out.view(-1, *self.slice_shape)
 
+
 class Discriminator(nn.Module):
     def __init__(self, slice_shape):
         super().__init__()
@@ -66,6 +67,7 @@ class Discriminator(nn.Module):
     def forward(self, x):
         x = x.view(x.size(0), -1)
         return self.model(x)
+
 
 def train_gan(slices, noise_dim=100, epochs=1000, batch_size=32):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -111,6 +113,7 @@ def train_gan(slices, noise_dim=100, epochs=1000, batch_size=32):
             print(f"Epoch {epoch}, Loss D: {loss_D.item():.4f}, Loss G: {loss_G.item():.4f}")
 
     return generator
+
 
 def generate_slices(generator, num_slices, noise_dim=100):
     z = torch.randn((num_slices, noise_dim))
