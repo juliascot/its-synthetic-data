@@ -21,6 +21,10 @@ def special_sigmoid_inverse(input: any) -> any:
     return (3 - np.log(1 / input - 1)) / 6
 
 
+def power_law(x, a, b):
+    return a * np.power(x, b)
+
+
 def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     initial_tensor = Tensor(filename, is_student_outside=True, is_augmented=True)
 
