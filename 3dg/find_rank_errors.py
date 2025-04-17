@@ -59,7 +59,8 @@ if __name__ == "__main__":
 
     # Use K-fold cross-validation and ALS to factor the tensor for various ranks
     train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
-    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, but we can sometimes get around it by using high n_splits
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, 
+    # but we can sometimes get around it by using high n_splits
 
     counter = 0
     for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
