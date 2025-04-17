@@ -66,7 +66,7 @@ if __name__ == "__main__":
     for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
 
         # Keep track of progress
-        print(f"Iteration {counter + 1} out of 30")
+        print(f"Iteration {counter + 1} out of {n_splits}")
         counter += 1
 
         # Create train tensor
