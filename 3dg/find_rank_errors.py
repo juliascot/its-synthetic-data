@@ -1,5 +1,5 @@
 '''
-This file decomposes and reconstructs the tensor for various ranks, printing the mean squared error
+This file decomposes and reconstructs the tensor for various ranks, printing the root mean squared error
 and accuracy.
 
 Set desired filename, is_stratified, ranks, l2 (within parafac call), and n_splits (within KFold)
