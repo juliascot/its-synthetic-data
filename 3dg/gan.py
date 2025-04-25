@@ -150,6 +150,18 @@ def graph_student_slices(slices: np.ndarray, epochs: int) -> None:
     plt.show()
 
 
+def tensor_average(tensor):
+    total = 0
+    num = 0
+    for outside in tensor:
+        for middle in outside:
+            for attempt in middle:
+                if not np.isnan(attempt):
+                    total += attempt
+                    num += 1
+    return total/num
+
+
 if __name__ == "__main__":
     augmented_tensor = create_dense_tensor(filename, rank, l2)
     np.random.shuffle(augmented_tensor)
