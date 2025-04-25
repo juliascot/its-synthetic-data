@@ -66,7 +66,7 @@ if __name__ == "__main__":
     for i, student_num in enumerate(interesting_students):
         plt.scatter(all_extracted_info[student_num-1][0], all_extracted_info[student_num-1][1], color=colors[i])
 
-    plt.title('Across all questions',fontsize=8)
+    plt.title(f'Across all questions, Rank = {rank}, L2 = {l2}',fontsize=8)
     plt.suptitle(f'Four Students\' Learning Curves',fontsize=16, y=0.97)
     plt.xlabel("$\t{a}$: prior knowledge")
     plt.ylabel("$\t{b}$: learning rate")
