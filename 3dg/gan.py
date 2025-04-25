@@ -9,8 +9,8 @@ from tensorly.decomposition import parafac
 from tensor import Tensor
 from student_graph import extract_prior_and_acquired_knowledge
 
-filename = "Getting_Started_Processed.csv"
-rank = 8
+filename = "Getting_Started_Reordered.csv"
+rank = 5
 l2 = 0
 
 
@@ -83,6 +83,7 @@ def train_gan(slices, noise_dim=100, epochs=1000, batch_size=32):
     optim_D = optim.Adam(discriminator.parameters(), lr=0.0002)
 
     data = torch.tensor(slices, dtype=torch.float32).to(device)
+    mean_slice = data.mean(dim=0)
 
     for epoch in range(epochs):
         idx = torch.randint(0, data.size(0), (batch_size,))
@@ -105,8 +106,14 @@ def train_gan(slices, noise_dim=100, epochs=1000, batch_size=32):
         optim_D.step()
 
         # --- Train Generator ---
+        diversity_score = ((fake - mean_slice) ** 2).mean(dim=(1, 2))*15
+
         out_fake = discriminator(fake)
-        loss_G = criterion(out_fake, real_labels)  # Fool the discriminator
+
+        g_loss_raw = criterion(out_fake, real_labels).view(-1)
+        loss_G = (g_loss_raw * (1 + diversity_score)).mean()  # Fool the discriminator
+        # loss_G = criterion(out_fake, real_labels)
+
         optim_G.zero_grad()
         loss_G.backward()
         optim_G.step()
@@ -134,7 +141,7 @@ def graph_student_slices(slices: np.ndarray, epochs: int) -> None:
     for student_num in range(len(slices)):
         plt.scatter(all_extracted_info[student_num-1][0], all_extracted_info[student_num-1][1])
 
-    plt.title(f'{len(slices)} Students, {epochs} Epochs',fontsize=8)
+    plt.title(f'{len(slices)} Students, {epochs} Epochs, Rank {rank}',fontsize=8)
     plt.suptitle(f'Generated Student Learning Curves',fontsize=16, y=0.97)
     plt.xlabel("$\t{a}$: prior knowledge")
     plt.ylabel("$\t{b}$: learning rate")
@@ -147,10 +154,11 @@ if __name__ == "__main__":
     augmented_tensor = create_dense_tensor(filename, rank, l2)
     np.random.shuffle(augmented_tensor)
 
-    epochs = 1000
+    epochs = 500
     generator = train_gan(augmented_tensor, epochs=epochs)
 
     synthetic_slices = generate_slices(generator, 30)
+    synthetic_slices = special_sigmoid_inverse(synthetic_slices)
 
     graph_student_slices(synthetic_slices, epochs)
 
