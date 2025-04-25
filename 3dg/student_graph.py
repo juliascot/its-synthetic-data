@@ -6,13 +6,12 @@ This is how I made one specific graph, but it can easily be modified to create o
 
 import numpy as np
 import tensorly as tl
-import pandas as pd
 import matplotlib.pyplot as plt
 from tensorly.decomposition import parafac
 from scipy.optimize import curve_fit
 from tensor import Tensor
 
-filename = "Getting_Started_Processed.csv"
+filename = "Getting_Started_Reordered.csv"
 rank = 8
 l2 = 0
 
