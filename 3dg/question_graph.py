@@ -7,6 +7,8 @@ from tensorly.decomposition import parafac
 from scipy.special import expit
 from scipy.optimize import curve_fit
 
+l2 = 0
+
 
 # Helper functions
 
@@ -156,7 +158,7 @@ train_tensor = np.nan_to_num(train_tensor)
 # Test on different ranks
 for rank in ranks:
 
-    weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=1)
+    weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
     reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
     # reconstructed_tensor = expit(reconstructed_tensor) # normalizing to probability
 
@@ -215,6 +217,7 @@ for rank in ranks:
         # plt.title(f'Question {question_number + 1} Learning Curve')
         # plt.title('With K-means ++ Clustering',fontsize=8)
         plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
+        plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
         plt.xlabel("$\t{a}$: prior knowledge")
         plt.ylabel("$\t{b}$: learning rate")
 
