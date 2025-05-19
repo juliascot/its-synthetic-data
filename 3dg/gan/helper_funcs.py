@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from tensorly.decomposition import parafac
 import numpy as np
 from tensor import Tensor
