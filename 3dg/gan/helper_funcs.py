@@ -14,7 +14,7 @@ def special_sigmoid_inverse(input: any) -> any:
     return (3 - np.log(1 / input - 1)) / 6
 
 
-def create_dense_tensor(filename: str, rank: int, l2: float, augmented_values: list[float]) -> np.ndarray:
+def create_dense_tensor(filename: str, rank: int, augmented_values: list[float], l2: float = 0) -> np.ndarray:
     initial_tensor = Tensor(filename, is_student_outside=True, is_augmented=True)
 
     mask = ~np.isnan(initial_tensor.data_tensor)
