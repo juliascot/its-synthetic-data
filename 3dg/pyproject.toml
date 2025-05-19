@@ -1,5 +1,5 @@
 [project]
-name = "tensor"
+name = "3dg"
 version = "1.0.0"
 
 [tool.setuptools]
