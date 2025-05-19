@@ -9,7 +9,7 @@ import tensorly as tl
 import matplotlib.pyplot as plt
 from tensorly.decomposition import parafac
 from scipy.optimize import curve_fit
-from tensor import Tensor
+from tensor_import.tensor import Tensor
 
 filename = "Getting_Started_Reordered.csv"
 rank = 8
