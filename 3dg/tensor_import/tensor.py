@@ -1,8 +1,3 @@
-'''
-Tensor class. This will take in the csv file (and optionally whether students or questions 
-are the outside axes) and process it
-'''
-
 import numpy as np
 import tensorly as tl
 import pandas as pd
@@ -10,6 +5,11 @@ import pandas as pd
 
 class Tensor:
     def __init__(self, filename: str, is_student_outside: bool = False, augment_offsets: list[int] = None) -> None:
+        """
+        Tensor class. This will take in the csv file (and optionally whether students or questions are the outside axes) and process it.
+
+        augment_offsets will add student slices to the tensor where the original students' first correct attempt has been moved by the offset amount (such as [-2, -1, 1, 2])
+        """
 
         # Load dataset into 3D array
         data = pd.read_csv(filename)
