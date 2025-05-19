@@ -9,7 +9,7 @@ import pandas as pd
 
 
 class Tensor:
-    def __init__(self, filename: str, is_student_outside: bool = False, is_augmented: bool = False) -> None:
+    def __init__(self, filename: str, is_student_outside: bool = False, augment_offsets: list[int] = None) -> None:
 
         # Load dataset into 3D array
         data = pd.read_csv(filename)
@@ -46,19 +46,17 @@ class Tensor:
                         middle[attempt_index:] = [1 for _ in middle[attempt_index:]]
                         break
 
-        if is_student_outside and is_augmented:
-            shaped_data = self.augment(shaped_data)
+        if is_student_outside and not augment_offsets == None:
+            shaped_data = self.augment(shaped_data, augment_offsets)
 
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
 
 
-    def augment(self, orig_data: np.ndarray) -> np.ndarray:
+    def augment(self, orig_data: np.ndarray, augment_offsets: list[int]) -> np.ndarray:
         augmented_data = np.copy(orig_data)
 
-        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, 1)))
-        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, -1)))
-        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, 2)))
-        augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, -2)))
+        for offset in augment_offsets:
+            augmented_data = np.vstack((augmented_data, self.shift_attempts_earlier(orig_data, offset)))
 
         return augmented_data
     
