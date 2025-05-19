@@ -1,3 +1,6 @@
 [project]
 name = "tensor"
 version = "1.0.0"
+
+[tool.setuptools]
+packages = ["tensor_import"]
