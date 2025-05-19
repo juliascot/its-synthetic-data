@@ -12,7 +12,7 @@ def special_sigmoid_inverse(input: any) -> any:
     return (3 - np.log(1 / input - 1)) / 6
 
 
-def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
+def create_dense_tensor(filename: str, rank: int, l2: float, augmented_values: list[float]) -> np.ndarray:
     initial_tensor = Tensor(filename, is_student_outside=True, is_augmented=True)
 
     mask = ~np.isnan(initial_tensor.data_tensor)
@@ -22,6 +22,6 @@ def create_dense_tensor(filename: str, rank: int, l2: float) -> np.ndarray:
     reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
     augmented_tensor = np.copy(reconstructed_tensor)
-    augmented_tensor = np.vstack((augmented_tensor, augmented_tensor * 0.9, augmented_tensor * 1.1))
+    augmented_tensor = np.vstack([augmented_tensor] + [val * augmented_tensor for val in augmented_values])
 
     return special_sigmoid(augmented_tensor)
