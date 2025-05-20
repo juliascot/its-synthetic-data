@@ -20,22 +20,30 @@ noise_dimension = 100
 batch_size = 30
 
 
+class WGAN():
+    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int):
+        self.generator = generator
+        self.discriminator = discriminator
+        self.noise_dimension = noise_dimension
+        self.discriminator_extra_iters = discriminator_extra_iters
+         
 
-def gradient_penalty(self, batch_size, real_images, fake_images):
-        alpha = torch.rand(batch_size, 1, 1, 1)
-        interpolated = real_images + alpha * (fake_images - real_images)
-        interpolated.requires_grad_(True)
 
-        mixed_scores = discriminator(interpolated)
+    def gradient_penalty(self, batch_size, real_images, fake_images):
+            alpha = torch.rand(batch_size, 1, 1, 1)
+            interpolated = real_images + alpha * (fake_images - real_images)
+            interpolated.requires_grad_(True)
 
-        with tf.GradientTape() as gp_tape:
-            gp_tape.watch(interpolated)
-            pred = self.discriminator(interpolated, training=True)
+            mixed_scores = self.discriminator(interpolated)
 
-        grads = gp_tape.gradient(pred, [interpolated])[0]
-        norm = tf.sqrt(tf.reduce_sum(tf.square(grads), axis=[1, 2, 3]))
-        gp = tf.reduce_mean((norm - 1.0) ** 2)
-        return gp
+            with tf.GradientTape() as gp_tape:
+                gp_tape.watch(interpolated)
+                pred = self.discriminator(interpolated, training=True)
+
+            grads = gp_tape.gradient(pred, [interpolated])[0]
+            norm = tf.sqrt(tf.reduce_sum(tf.square(grads), axis=[1, 2, 3]))
+            gp = tf.reduce_mean((norm - 1.0) ** 2)
+            return gp
 
 
 if __name__ == "__main__":
