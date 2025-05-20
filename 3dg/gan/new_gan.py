@@ -18,14 +18,16 @@ l2 = 0
 epochs = 1000
 noise_dimension = 100
 batch_size = 30
+gp_weight = 10.0
 
 
 class WGAN():
-    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int):
+    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, gp_weight: float = 10):
         self.generator = generator
         self.discriminator = discriminator
         self.noise_dimension = noise_dimension
         self.discriminator_extra_iters = discriminator_extra_iters
+        self.gp_weight = gp_weight
          
 
 
