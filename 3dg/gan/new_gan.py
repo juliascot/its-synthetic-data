@@ -30,18 +30,18 @@ class WGAN():
         self.gp_weight = gp_weight
          
     def gradient_penalty(self, batch_size, real_images, fake_images):
-            alpha = torch.rand(batch_size, 1, 1, 1)
-            interpolated = real_images + alpha * (fake_images - real_images)
-            interpolated.requires_grad_(True)
+        alpha = torch.rand(batch_size, 1, 1, 1)
+        interpolated = real_images + alpha * (fake_images - real_images)
+        interpolated.requires_grad_(True)
 
-            mixed_scores = self.discriminator(interpolated)
+        mixed_scores = self.discriminator(interpolated)
 
-            gradients = torch.autograd.grad(mixed_scores, interpolated, grad_outputs=torch.ones_like(mixed_scores))[0]
+        gradients = torch.autograd.grad(mixed_scores, interpolated, grad_outputs=torch.ones_like(mixed_scores))[0]
 
-            gradients = gradients.view(batch_size, -1)
-            gradient_norm = gradients.norm(2, dim=1)
-            gp = self.gp_weight * ((gradient_norm - 1) ** 2).mean()
-            return gp
+        gradients = gradients.view(batch_size, -1)
+        gradient_norm = gradients.norm(2, dim=1)
+        gp = self.gp_weight * ((gradient_norm - 1) ** 2).mean()
+        return gp
     
 
 
