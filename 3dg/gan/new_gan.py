@@ -38,13 +38,11 @@ class WGAN():
 
             mixed_scores = self.discriminator(interpolated)
 
-            with tf.GradientTape() as gp_tape:
-                gp_tape.watch(interpolated)
-                pred = self.discriminator(interpolated, training=True)
+            gradients = torch.autograd.grad(mixed_scores, interpolated, grad_outputs=torch.ones_like(mixed_scores))[0]
 
-            grads = gp_tape.gradient(pred, [interpolated])[0]
-            norm = tf.sqrt(tf.reduce_sum(tf.square(grads), axis=[1, 2, 3]))
-            gp = tf.reduce_mean((norm - 1.0) ** 2)
+            gradients = gradients.view(batch_size, -1)
+            gradient_norm = gradients.norm(2, dim=1)
+            gp = gp_weight * ((gradient_norm - 1) ** 2).mean()
             return gp
 
 
