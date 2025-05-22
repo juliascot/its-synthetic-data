@@ -22,8 +22,15 @@ epochs = 1000
 noise_dimension = 100
 batch_size = 30
 gp_weight = 10.0
+
 generator_optimizer = keras.optimizers.Adam()
 discriminator_optimizer = keras.optimizers.Adam()
+
+def critic_loss(real_scores: np.ndarray, fake_scores: np.ndarray) -> float:
+    return -(torch.mean(real_scores) - torch.mean(fake_scores))
+
+def generator_loss(fake_scores: np.ndarray) -> float:
+    return -torch.mean(fake_scores)
 
 
 class WGAN():
