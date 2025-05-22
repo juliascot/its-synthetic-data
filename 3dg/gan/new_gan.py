@@ -78,10 +78,13 @@ class WGAN():
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
 
-    def train_step(self, real_slices: np.ndarray) -> None:
+    def train_step(self, real_slices: np.ndarray) -> dict:
+        for _ in range(self.critic_iters):
+            pass
         # loop through the critic_iters to generate fake slices and train discriminator (calculate loss, update weights)
         # generate another image and train generator (calculate loss, update weights)
-        pass
+        # return losses
+        return
 
 
 
