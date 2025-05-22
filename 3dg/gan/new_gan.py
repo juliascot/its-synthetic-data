@@ -1,4 +1,5 @@
 import torch
+import torch.utils.data
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
@@ -49,11 +50,10 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 
 
 class WGAN():
-    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
+    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
         self.generator = generator
         self.discriminator = discriminator
         self.noise_dimension = noise_dimension
-        self.discriminator_extra_iters = discriminator_extra_iters
         self.device = device
         self.gp_weight = gp_weight
         self.critic_iters = critic_iters_per_gen
@@ -79,19 +79,22 @@ class WGAN():
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
 
-    def train_step(self, real_slices: np.ndarray, small_batch_size: int):
+    def train_step(self, real_slices: np.ndarray):
+
+        batch_size = real_slices.size(0)
+
         for _ in range(self.critic_iters):
-            noise = torch.randn(real_slices.size(0), self.noise_dimension).to(self.device)
+            noise = torch.randn(batch_size, self.noise_dimension).to(self.device)
             fake_slices = self.generator(noise).detach()
 
             real_scores = self.discriminator(real_slices)
             fake_scores = self.discriminator(fake_slices)
 
-            discriminator_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(small_batch_size, real_slices, fake_slices)
+            discriminator_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices)
 
-            discriminator_optimizer.zero_grad()
+            self.d_optimizer.zero_grad()
             discriminator_loss.backward()
-            discriminator_optimizer.step()
+            self.d_optimizer.step()
 
         noise = torch.randn(real_slices.size(0), self.noise_dimension).to(self.device)
         fake_slices = self.generator(noise)
@@ -99,13 +102,11 @@ class WGAN():
 
         gen_loss = generator_loss(fake_scores)
 
-        generator_optimizer.zero_grad()
+        self.g_optimizer.zero_grad()
         gen_loss.backward()
-        generator_optimizer.step()
+        self.g_optimizer.step()
 
         return discriminator_loss.item(), gen_loss.item()
-
-
 
 
 
@@ -116,10 +117,23 @@ class WGAN():
 
 
 if __name__ == "__main__":
-    augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values, l2=l2)
 
-    # start generator and discriminator
-    # start WGAN, passing through all of the hyperparameters
+    augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values, l2=l2)
+    train_loader = torch.utils.data.DataLoader(augmented_tensor, batch_size=batch_size, shuffle=True)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    generator = Generator(noise_dimension).to(device)
+    discriminator = Discriminator().to(device)
+
+    wgan = WGAN(generator, discriminator, noise_dimension, device, gp_weight=gp_weight, critic_iters_per_gen=critic_iters_per_gen)
+    wgan.compile(discriminator_optimizer, generator_optimizer, critic_loss, generator_loss)
+
+
+    for i in range(epochs):
+        for i, batch_slices in enumerate(train_loader):
+            discriminator_loss_output, generator_loss_output = wgan.train_step(batch_slices)
+
     # loop through epochs
 
 
