@@ -13,6 +13,13 @@ from discriminator import Discriminator
 from helper_funcs import *
 
 
+
+
+################################
+#       HYPERPARAMETERS        #
+################################
+
+
 filename = "Getting_Started_Reordered.csv"
 rank = 5
 pre_reconstruction_augmentation_values = [-2, -1, 1, 2] # Offset first correct attempt on every question by this amount
@@ -31,6 +38,13 @@ def critic_loss(real_scores: np.ndarray, fake_scores: np.ndarray) -> float:
 
 def generator_loss(fake_scores: np.ndarray) -> float:
     return -torch.mean(fake_scores)
+
+
+
+
+################################
+#             GAN              #
+################################
 
 
 class WGAN():
@@ -61,6 +75,14 @@ class WGAN():
         self.g_optimizer = g_optimizer
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
+
+
+
+
+
+################################
+#             MAIN             #
+################################
 
 
 if __name__ == "__main__":
