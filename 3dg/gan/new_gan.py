@@ -32,9 +32,9 @@ class WGAN():
         self.discriminator_extra_iters = discriminator_extra_iters
         self.gp_weight = gp_weight
          
-    def gradient_penalty(self, batch_size, real_images, fake_images):
+    def gradient_penalty(self, batch_size: int, real_slices, fake_slices):
         alpha = torch.rand(batch_size, 1, 1, 1)
-        interpolated = real_images + alpha * (fake_images - real_images)
+        interpolated = real_slices + alpha * (fake_slices - real_slices)
         interpolated.requires_grad_(True)
 
         mixed_scores = self.discriminator(interpolated)
