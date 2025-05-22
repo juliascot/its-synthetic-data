@@ -50,6 +50,7 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 
 
 class WGAN():
+    
     def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
         self.generator = generator
         self.discriminator = discriminator
@@ -57,7 +58,8 @@ class WGAN():
         self.device = device
         self.gp_weight = gp_weight
         self.critic_iters = critic_iters_per_gen
-         
+
+
     def gradient_penalty(self, batch_size: int, real_slices: np.ndarray, fake_slices: np.ndarray) -> float:
         alpha = torch.rand(batch_size, 1, 1, 1)
         interpolated = real_slices + alpha * (fake_slices - real_slices)
@@ -72,12 +74,14 @@ class WGAN():
         gp = self.gp_weight * ((gradient_norm - 1) ** 2).mean()
         return gp
     
+
     def compile(self, d_optimizer: Any, g_optimizer: Any, d_loss_fn: Callable[[np.ndarray, np.ndarray], float], g_loss_fn: Callable[[np.ndarray], float]) -> None:
         super(WGAN, self).compile()
         self.d_optimizer = d_optimizer
         self.g_optimizer = g_optimizer
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
+
 
     def train_step(self, real_slices: np.ndarray):
 
@@ -133,7 +137,7 @@ if __name__ == "__main__":
     for i in range(epochs):
         for i, batch_slices in enumerate(train_loader):
             discriminator_loss_output, generator_loss_output = wgan.train_step(batch_slices)
-            
+
 
 
 
