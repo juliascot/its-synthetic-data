@@ -43,7 +43,12 @@ class WGAN():
         gp = self.gp_weight * ((gradient_norm - 1) ** 2).mean()
         return gp
     
-
+    def compile(self, d_optimizer, g_optimizer, d_loss_fn, g_loss_fn):
+        super(WGAN, self).compile()
+        self.d_optimizer = d_optimizer
+        self.g_optimizer = g_optimizer
+        self.d_loss_fn = d_loss_fn
+        self.g_loss_fn = g_loss_fn
 
 
 if __name__ == "__main__":
