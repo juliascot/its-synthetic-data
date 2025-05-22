@@ -79,7 +79,7 @@ class WGAN():
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
 
-    def train_step(self, real_slices: np.ndarray, small_batch_size: int) -> dict:
+    def train_step(self, real_slices: np.ndarray, small_batch_size: int):
         for _ in range(self.critic_iters):
             noise = torch.randn(real_slices.size(0), self.noise_dimension).to(self.device)
             fake_slices = self.generator(noise).detach()
@@ -93,12 +93,17 @@ class WGAN():
             discriminator_loss.backward()
             discriminator_optimizer.step()
 
-        # loop through the critic_iters to generate fake slices and train discriminator (calculate loss, update weights)
-        # generate another image and train generator (calculate loss, update weights)
-        # return losses
-        return
+        noise = torch.randn(real_slices.size(0), self.noise_dimension).to(self.device)
+        fake_slices = self.generator(noise)
+        fake_scores = self.discriminator(fake_slices)
 
+        gen_loss = generator_loss(fake_scores)
 
+        generator_optimizer.zero_grad()
+        gen_loss.backward()
+        generator_optimizer.step()
+
+        return discriminator_loss.item(), gen_loss.item()
 
 
 
