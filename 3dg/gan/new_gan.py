@@ -76,7 +76,7 @@ class WGAN():
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
 
-    def train_step(self, real_slices: np.ndarray):
+    def train_step(self, real_slices: np.ndarray) -> None:
         pass
 
 
