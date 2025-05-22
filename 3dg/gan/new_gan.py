@@ -6,6 +6,8 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
 import keras
+from typing import Any
+from collections.abc import Callable
 from generator import Generator
 from discriminator import Discriminator
 from helper_funcs import *
@@ -32,7 +34,7 @@ class WGAN():
         self.discriminator_extra_iters = discriminator_extra_iters
         self.gp_weight = gp_weight
          
-    def gradient_penalty(self, batch_size: int, real_slices, fake_slices):
+    def gradient_penalty(self, batch_size: int, real_slices: np.ndarray, fake_slices: np.ndarray) -> float:
         alpha = torch.rand(batch_size, 1, 1, 1)
         interpolated = real_slices + alpha * (fake_slices - real_slices)
         interpolated.requires_grad_(True)
@@ -46,7 +48,7 @@ class WGAN():
         gp = self.gp_weight * ((gradient_norm - 1) ** 2).mean()
         return gp
     
-    def compile(self, d_optimizer, g_optimizer, d_loss_fn, g_loss_fn):
+    def compile(self, d_optimizer: Any, g_optimizer: Any, d_loss_fn: Callable[[np.ndarray, np.ndarray], float], g_loss_fn: Callable[[np.ndarray], float]) -> None:
         super(WGAN, self).compile()
         self.d_optimizer = d_optimizer
         self.g_optimizer = g_optimizer
