@@ -50,7 +50,7 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 
 
 class WGAN():
-    
+
     def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
         self.generator = generator
         self.discriminator = discriminator
@@ -84,7 +84,6 @@ class WGAN():
 
 
     def train_step(self, real_slices: np.ndarray):
-
         batch_size = real_slices.size(0)
 
         for _ in range(self.critic_iters):
