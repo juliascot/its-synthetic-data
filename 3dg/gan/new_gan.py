@@ -133,9 +133,7 @@ if __name__ == "__main__":
     for i in range(epochs):
         for i, batch_slices in enumerate(train_loader):
             discriminator_loss_output, generator_loss_output = wgan.train_step(batch_slices)
-
-    # loop through epochs
-
+            
 
 
 
