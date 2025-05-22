@@ -5,6 +5,7 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
+import keras
 from generator import Generator
 from discriminator import Discriminator
 from helper_funcs import *
@@ -19,6 +20,8 @@ epochs = 1000
 noise_dimension = 100
 batch_size = 30
 gp_weight = 10.0
+generator_optimizer = keras.optimizers.Adam()
+discriminator_optimizer = keras.optimizers.Adam()
 
 
 class WGAN():
