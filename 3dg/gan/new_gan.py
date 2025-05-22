@@ -29,6 +29,7 @@ epochs = 1000
 noise_dimension = 100
 batch_size = 30
 gp_weight = 10.0
+critic_iters_per_gen = 5
 
 generator_optimizer = keras.optimizers.Adam()
 discriminator_optimizer = keras.optimizers.Adam()
@@ -48,12 +49,13 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 
 
 class WGAN():
-    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, gp_weight: float = 10):
+    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, gp_weight: float = 10, critic_iters_per_gen: int = 5):
         self.generator = generator
         self.discriminator = discriminator
         self.noise_dimension = noise_dimension
         self.discriminator_extra_iters = discriminator_extra_iters
         self.gp_weight = gp_weight
+        self.critic_iters = critic_iters_per_gen
          
     def gradient_penalty(self, batch_size: int, real_slices: np.ndarray, fake_slices: np.ndarray) -> float:
         alpha = torch.rand(batch_size, 1, 1, 1)
@@ -77,6 +79,8 @@ class WGAN():
         self.g_loss_fn = g_loss_fn
 
     def train_step(self, real_slices: np.ndarray) -> None:
+        # loop through the critic_iters to generate fake slices and train discriminator (calculate loss, update weights)
+        # generate another image and train generator (calculate loss, update weights)
         pass
 
 
@@ -93,6 +97,10 @@ class WGAN():
 
 if __name__ == "__main__":
     augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values, l2=l2)
+
+    # start generator and discriminator
+    # start WGAN, passing through all of the hyperparameters
+    # loop through epochs
 
 
 
