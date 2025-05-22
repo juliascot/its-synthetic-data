@@ -49,11 +49,12 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 
 
 class WGAN():
-    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, gp_weight: float = 10, critic_iters_per_gen: int = 5):
+    def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, discriminator_extra_iters: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
         self.generator = generator
         self.discriminator = discriminator
         self.noise_dimension = noise_dimension
         self.discriminator_extra_iters = discriminator_extra_iters
+        self.device = device
         self.gp_weight = gp_weight
         self.critic_iters = critic_iters_per_gen
          
