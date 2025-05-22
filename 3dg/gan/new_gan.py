@@ -76,6 +76,12 @@ class WGAN():
         self.d_loss_fn = d_loss_fn
         self.g_loss_fn = g_loss_fn
 
+    def train_step(self, real_slices: np.ndarray):
+        pass
+
+
+
+
 
 
 
@@ -86,7 +92,7 @@ class WGAN():
 
 
 if __name__ == "__main__":
-    augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values)
+    augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values, l2=l2)
 
 
 
