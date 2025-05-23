@@ -1,7 +1,7 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import torch
-import torch.utils.data
+from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
@@ -113,7 +113,7 @@ class WGAN(keras.Model):
         gen_loss.backward()
         self.g_optimizer.step()
 
-        return dis_loss, gen_loss
+        return dis_loss.item(), gen_loss.item()
 
 
 
@@ -126,7 +126,7 @@ class WGAN(keras.Model):
 if __name__ == "__main__":
 
     augmented_tensor = create_dense_tensor(filename, rank, pre_reconstruction_augmentation_values, post_reconstruction_augmentation_values, l2=l2)
-    train_loader = torch.utils.data.DataLoader(augmented_tensor, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(augmented_tensor, batch_size=batch_size, shuffle=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
