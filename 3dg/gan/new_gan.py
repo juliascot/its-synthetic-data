@@ -88,11 +88,11 @@ class WGAN(keras.Model):
 
     def train_step(self, real_slices: np.ndarray):
         batch_size = real_slices.size(0)
+        real_slices = real_slices.float().unsqueeze(1)
 
         for _ in range(self.critic_iters):
             noise = torch.randn(batch_size, self.noise_dimension).to(self.device)
             fake_slices = self.generator(noise).detach()
-            real_slices = real_slices.float().unsqueeze(1)
 
             real_scores = self.discriminator(real_slices)
             fake_scores = self.discriminator(fake_slices.float())
