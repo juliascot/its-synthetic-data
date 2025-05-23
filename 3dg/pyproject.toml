@@ -3,4 +3,4 @@ name = "3dg"
 version = "1.0.0"
 
 [tool.setuptools]
-packages = ["tensor_import", "learning_curve_analysis"]
+packages = ["internal_imports"]
