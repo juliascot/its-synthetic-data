@@ -1,10 +1,10 @@
 from tensorly.decomposition import parafac
 import numpy as np
-from tensor_import.tensor import Tensor
+from internal_imports.tensor import Tensor
 import tensorly as tl
 import torch
 import matplotlib.pyplot as plt
-from learning_curve_analysis.learning_curve_analysis import extract_prior_and_acquired_knowledge
+from internal_imports.learning_curve_analysis import extract_prior_and_acquired_knowledge
 
 
 def special_sigmoid(input: any) -> any:
