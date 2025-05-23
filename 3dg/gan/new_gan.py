@@ -97,10 +97,10 @@ class WGAN(keras.Model):
             real_scores = self.discriminator(real_slices)
             fake_scores = self.discriminator(fake_slices.float())
 
-            discriminator_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices)
+            dis_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices)
 
             self.d_optimizer.zero_grad()
-            discriminator_loss.backward()
+            dis_loss.backward()
             self.d_optimizer.step()
 
         noise = torch.randn(real_slices.size(0), self.noise_dimension).to(self.device)
@@ -113,7 +113,7 @@ class WGAN(keras.Model):
         gen_loss.backward()
         self.g_optimizer.step()
 
-        return discriminator_loss, gen_loss
+        return dis_loss, gen_loss
 
 
 
