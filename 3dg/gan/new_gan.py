@@ -85,6 +85,7 @@ class WGAN():
 
     def train_step(self, real_slices: np.ndarray):
         batch_size = real_slices.size(0)
+        real_slices = special_sigmoid(real_slices)
 
         for _ in range(self.critic_iters):
             noise = torch.randn(batch_size, self.noise_dimension).to(self.device)
