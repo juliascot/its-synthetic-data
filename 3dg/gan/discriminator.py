@@ -13,7 +13,7 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             nn.BatchNorm2d(128),
             nn.Flatten(),
-            nn.Linear(5 * 21 * 256, 1)
+            nn.Linear(5 * 21 * 128, 1)
         )
 
     def forward(self, x):
