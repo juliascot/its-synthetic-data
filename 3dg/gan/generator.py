@@ -1,5 +1,5 @@
 import torch.nn as nn
-from helper_funcs import special_sigmoid
+from helper_funcs import SpecialSigmoid
 
 # Generator
 class Generator(nn.Module):
@@ -17,7 +17,7 @@ class Generator(nn.Module):
             nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.ConvTranspose2d(64, 1, 3, stride=2, padding=1, output_padding=(1,2)),
-            special_sigmoid()
+            SpecialSigmoid()
         )
 
     def forward(self, x):
