@@ -28,7 +28,7 @@ rank = 5
 pre_reconstruction_augmentation_values = [-2, -1, 1, 2] # Offset first correct attempt on every question by this amount
 post_reconstruction_augmentation_values = [0.9, 1.1] # Multiply the whole reconstructed tensor by these amounts to increase its size
 l2 = 0
-epochs = 1000
+epochs = 40
 noise_dimension = 100
 batch_size = 30
 gp_weight = 10.0
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             total_epoch_dis_losses.append(discriminator_loss_output)
             total_epoch_gen_losses.append(generator_loss_output)
 
-            print(f'{i}: {discriminator_loss_output}, {generator_loss_output}')
+            # print(f'{i}: {discriminator_loss_output}, {generator_loss_output}')
         
         if epoch % 10 == 0:
             print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
