@@ -136,6 +136,8 @@ if __name__ == "__main__":
     wgan = WGAN(generator, discriminator, noise_dimension, device, gp_weight=gp_weight, critic_iters_per_gen=critic_iters_per_gen)
     wgan.compile(discriminator_optimizer(discriminator.parameters()), generator_optimizer(generator.parameters()), critic_loss, generator_loss)
 
+    overall_dis_losses = []
+    overall_gen_losses = []
 
     for epoch in range(epochs):
         total_epoch_dis_losses = []
@@ -146,11 +148,17 @@ if __name__ == "__main__":
             total_epoch_dis_losses.append(discriminator_loss_output)
             total_epoch_gen_losses.append(generator_loss_output)
 
+            print(f'{i}: {discriminator_loss_output}, {generator_loss_output}')
+        
         if epoch % 10 == 0:
             print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
 
-        new_slices = special_sigmoid_inverse(generate_slices(generator, 30, noise_dimension))
-        graph_student_slices(new_slices, epochs, rank, l2)
+        overall_dis_losses.append(total_epoch_dis_losses)
+        overall_gen_losses.append(total_epoch_gen_losses)
+
+
+    new_slices = special_sigmoid_inverse(generate_slices(generator, 30, noise_dimension))
+    graph_student_slices(new_slices, epochs, rank, l2)
 
 
 
