@@ -3,6 +3,7 @@ import numpy as np
 from internal_imports.tensor import Tensor
 import tensorly as tl
 import torch
+import torch.nn as nn
 import matplotlib.pyplot as plt
 from internal_imports.learning_curve_analysis import extract_prior_and_acquired_knowledge
 
@@ -13,6 +14,11 @@ def special_sigmoid(input: any) -> any:
 
 def special_sigmoid_inverse(input: any) -> any:
     return (3 - np.log(1 / input - 1)) / 6
+
+
+class SpecialSigmoid(nn.Module):
+    def forward(self, input):
+        return special_sigmoid(input)
 
 
 def create_dense_tensor(
