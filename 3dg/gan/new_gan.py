@@ -97,7 +97,7 @@ class WGAN(keras.Model):
             real_scores = self.discriminator(real_slices)
             fake_scores = self.discriminator(fake_slices.float())
 
-            dis_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices)
+            dis_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices) * gp_weight
 
             self.d_optimizer.zero_grad()
             dis_loss.backward()
