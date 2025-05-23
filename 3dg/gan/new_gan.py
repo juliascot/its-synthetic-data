@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
 import keras
-from typing import Any
+from typing import Any, Tuple
 from collections.abc import Callable
 from generator import Generator
 from discriminator import Discriminator
@@ -86,7 +86,7 @@ class WGAN(keras.Model):
         self.g_loss_fn = g_loss_fn
 
 
-    def train_step(self, real_slices: np.ndarray):
+    def train_step(self, real_slices: np.ndarray) -> Tuple[float, float]:
         batch_size = real_slices.size(0)
         real_slices = real_slices.float().unsqueeze(1)
 
