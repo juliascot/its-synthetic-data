@@ -1,3 +1,5 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import torch
 import torch.utils.data
 import torch.nn as nn
@@ -32,8 +34,8 @@ batch_size = 30
 gp_weight = 10.0
 critic_iters_per_gen = 5
 
-generator_optimizer = keras.optimizers.Adam()
-discriminator_optimizer = keras.optimizers.Adam()
+generator_optimizer = optim.Adam
+discriminator_optimizer = optim.Adam
 
 def critic_loss(real_scores: np.ndarray, fake_scores: np.ndarray) -> float:
     return -(torch.mean(real_scores) - torch.mean(fake_scores))
@@ -132,7 +134,7 @@ if __name__ == "__main__":
     discriminator = Discriminator().to(device)
 
     wgan = WGAN(generator, discriminator, noise_dimension, device, gp_weight=gp_weight, critic_iters_per_gen=critic_iters_per_gen)
-    wgan.compile(discriminator_optimizer, generator_optimizer, critic_loss, generator_loss)
+    wgan.compile(discriminator_optimizer(discriminator.parameters()), generator_optimizer(generator.parameters()), critic_loss, generator_loss)
 
 
     for epoch in range(epochs):
