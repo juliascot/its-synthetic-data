@@ -36,7 +36,7 @@ def create_dense_tensor(
     return special_sigmoid(augmented_tensor)
 
 
-def graph_student_slices(slices: np.ndarray, epochs: int, rank: int, l2: float = 0) -> None:
+def graph_student_slices(slices: np.ndarray, epochs: int = None, rank: int = None, l2: float = None) -> None:
     
     all_extracted_info = extract_prior_and_acquired_knowledge(slices)
 
