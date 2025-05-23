@@ -49,9 +49,10 @@ def generator_loss(fake_scores: np.ndarray) -> float:
 ################################
 
 
-class WGAN():
+class WGAN(keras.Model):
 
     def __init__(self, generator: Generator, discriminator: Discriminator, noise_dimension: int, device: torch.device, gp_weight: float = 10, critic_iters_per_gen: int = 5):
+        super(WGAN, self).__init__()
         self.generator = generator
         self.discriminator = discriminator
         self.noise_dimension = noise_dimension
