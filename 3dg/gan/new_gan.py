@@ -145,7 +145,7 @@ if __name__ == "__main__":
         if epoch % 10 == 0:
             print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
 
-        new_slices = generate_slices(generator, 30, noise_dimension)
+        new_slices = special_sigmoid_inverse(generate_slices(generator, 30, noise_dimension))
         graph_student_slices(new_slices, epochs, rank, l2)
 
 
