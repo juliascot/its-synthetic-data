@@ -9,7 +9,7 @@ from internal_imports.learning_curve_analysis import extract_prior_and_acquired_
 
 
 def special_sigmoid(input: any) -> any:
-    return 1 / (1 + np.exp(-6 * input + 3))
+    return 1 / (1 + torch.exp(-6 * input + 3))
 
 
 def special_sigmoid_inverse(input: any) -> any:
