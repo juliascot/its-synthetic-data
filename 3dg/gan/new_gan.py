@@ -109,7 +109,7 @@ class WGAN():
         gen_loss.backward()
         self.g_optimizer.step()
 
-        return discriminator_loss.item(), gen_loss.item()
+        return discriminator_loss, gen_loss
 
 
 
@@ -144,6 +144,9 @@ if __name__ == "__main__":
 
         if epoch % 10 == 0:
             print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
+
+        new_slices = generate_slices(generator, 30, noise_dimension)
+        graph_student_slices(new_slices, epochs, rank, l2)
 
 
 
