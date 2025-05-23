@@ -66,7 +66,7 @@ class WGAN(keras.Model):
         interpolated = real_slices + alpha * (fake_slices - real_slices)
         interpolated.requires_grad_(True)
 
-        mixed_scores = self.discriminator(interpolated.float())
+        mixed_scores = self.discriminator(interpolated)
 
         gradients = torch.autograd.grad(mixed_scores, interpolated, grad_outputs=torch.ones_like(mixed_scores))[0]
 
@@ -90,8 +90,9 @@ class WGAN(keras.Model):
         for _ in range(self.critic_iters):
             noise = torch.randn(batch_size, self.noise_dimension).to(self.device)
             fake_slices = self.generator(noise).detach()
+            real_slices = real_slices.float().unsqueeze(1)
 
-            real_scores = self.discriminator(real_slices.float().unsqueeze(1))
+            real_scores = self.discriminator(real_slices)
             fake_scores = self.discriminator(fake_slices.float())
 
             discriminator_loss = critic_loss(real_scores, fake_scores) + self.gradient_penalty(batch_size, real_slices, fake_slices)
