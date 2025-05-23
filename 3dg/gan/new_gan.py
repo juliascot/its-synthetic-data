@@ -135,7 +135,7 @@ if __name__ == "__main__":
     discriminator = Discriminator().to(device)
 
     wgan = WGAN(generator, discriminator, noise_dimension, device, gp_weight=gp_weight, critic_iters_per_gen=critic_iters_per_gen)
-    wgan.compile(discriminator_optimizer(discriminator.parameters(), learning_rate), generator_optimizer(generator.parameters(), learning_rate), critic_loss, generator_loss)
+    wgan.compile(discriminator_optimizer(discriminator.parameters(), learning_rate, (0.0, 0.9)), generator_optimizer(generator.parameters(), learning_rate, (0.0, 0.9)), critic_loss, generator_loss)
 
     overall_dis_losses = []
     overall_gen_losses = []
