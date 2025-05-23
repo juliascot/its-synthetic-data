@@ -13,10 +13,10 @@ class Generator(nn.Module):
             nn.ConvTranspose2d(256, 128, 3, stride=1, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(True),
-            nn.ConvTranspose2d(128, 64, 3, stride=2, padding=1),
+            nn.ConvTranspose2d(128, 64, 3, stride=2, padding=1, output_padding=(0,1)),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
-            nn.ConvTranspose2d(64, 1, 3, stride=2, padding=1, output_padding=(1,2)),
+            nn.ConvTranspose2d(64, 1, 3, stride=2, padding=1, output_padding=(1,0)),
             SpecialSigmoid()
         )
 
