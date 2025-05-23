@@ -133,10 +133,17 @@ if __name__ == "__main__":
     wgan.compile(discriminator_optimizer, generator_optimizer, critic_loss, generator_loss)
 
 
-    for i in range(epochs):
+    for epoch in range(epochs):
+        total_epoch_dis_losses = []
+        total_epoch_gen_losses = []
+
         for i, batch_slices in enumerate(train_loader):
             discriminator_loss_output, generator_loss_output = wgan.train_step(batch_slices)
+            total_epoch_dis_losses.append(discriminator_loss_output)
+            total_epoch_gen_losses.append(generator_loss_output)
 
+        if epoch % 10 == 0:
+            print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
 
 
 
