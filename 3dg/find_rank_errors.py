@@ -10,12 +10,12 @@ import tensorly as tl
 import pandas as pd
 from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
-from tensor import Tensor
+from internal_imports.tensor import Tensor
 
 
-filename = "Getting_Started_Processed.csv"
+filename = ""
 is_stratified = False # Set this to true if we want results to have the data round to zeros or ones (will also print the accuracy)
-ranks = range(1,10)
+ranks = range(1, 9)
 l2 = 0 # Regularization -- basically to what degree we ignore potential outliers.
 n_splits = 30 # The k in k-fold cross-validation
 
@@ -62,6 +62,8 @@ if __name__ == "__main__":
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, 
     # but we can sometimes get around it by using high n_splits
 
+    average_values = {rank: [] for rank in ranks}
+
     counter = 0
     for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
 
@@ -95,6 +97,16 @@ if __name__ == "__main__":
                 train_accuracy[rank].append(train_acc)
                 test_accuracy[rank].append(test_acc)
 
+            total = 0
+            num = 0
+            for outside in reconstructed_tensor:
+                for middle in outside:
+                    for attempt in middle:
+                        if not np.isnan(attempt):
+                            total += attempt
+                            num += 1
+            average_values[rank].append(total/num)
+
             # Compute the errors
             mse_train_values, mse_test_values = [], []
 
@@ -119,6 +131,10 @@ if __name__ == "__main__":
         print("Test accuracy: ", average_test_accuracy)
 
     average_train_error = {rank: np.mean(errors) for rank, errors in train_errors.items()}
-    average_test_error = {rank: np.mean(errors) for rank, errors in test_errors.items()}
     print("Train errors: ", average_train_error)
+
+    average_test_error = {rank: np.mean(errors) for rank, errors in test_errors.items()}
     print("Test errors: ", average_test_error)
+
+    average_average_values = {rank: np.mean(avg) for rank, avg in average_values.items()}
+    print(f"Average tensor value: {average_average_values}")
