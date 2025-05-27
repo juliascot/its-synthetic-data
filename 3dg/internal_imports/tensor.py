@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class Tensor:
-    def __init__(self, filename: str, is_student_outside: bool = False, augment_offsets: list[int] = None) -> None:
+    def __init__(self, filename: str, is_student_outside: bool = False, augment_offsets: list[int] = None, has_extra_ones: bool = True) -> None:
         """
         Tensor class. This will take in the csv file (and optionally whether students or questions are the outside axes) and process it.
 
@@ -39,12 +39,13 @@ class Tensor:
 
         # Optional: assume that when a student has gotten a question right, they get that question right every subsequent attempt (rather than empty value)
         # We don't include this in the orig_present_points to avoid using these as test data points
-        for outside in shaped_data:
-            for middle in outside:
-                for attempt_index in range(len(middle)):
-                    if middle[attempt_index] == 1:
-                        middle[attempt_index:] = [1 for _ in middle[attempt_index:]]
-                        break
+        if has_extra_ones:
+            for outside in shaped_data:
+                for middle in outside:
+                    for attempt_index in range(len(middle)):
+                        if middle[attempt_index] == 1:
+                            middle[attempt_index:] = [1 for _ in middle[attempt_index:]]
+                            break
 
         if is_student_outside and not augment_offsets == None:
             shaped_data = self.augment(shaped_data, augment_offsets)
