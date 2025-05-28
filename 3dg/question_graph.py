@@ -9,19 +9,32 @@ from scipy.optimize import curve_fit
 from internal_imports.tensor import Tensor
 from internal_imports.learning_curve_analysis import extract_prior_and_acquired_knowledge
 
+
+
+################################
+#       HYPERPARAMETERS        #
+################################
+
 l2 = 0
 filename = "Getting_Started_Reordered.csv"
 rank = 6
 
 
 
-# Helper functions
+
+
+################################
+#      HELPER FUNCTIONS        #
+################################
 
 def power_law(x, a, b):
     return a * np.power(x, b)
 
 
 
+################################
+#             MAIN             #
+################################
 
 if __name__ == "__main__":
 
