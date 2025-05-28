@@ -1,11 +1,7 @@
-import sys
 import numpy as np
 import tensorly as tl
-import pandas as pd
 import matplotlib.pyplot as plt
 from tensorly.decomposition import parafac
-from scipy.special import expit
-from scipy.optimize import curve_fit
 from internal_imports.tensor import Tensor
 from internal_imports.learning_curve_analysis import extract_prior_and_acquired_knowledge
 
