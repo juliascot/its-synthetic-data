@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from tensorly.decomposition import parafac
 from scipy.special import expit
 from scipy.optimize import curve_fit
+from internal_imports.tensor import Tensor
+from internal_imports.learning_curve_analysis import extract_prior_and_acquired_knowledge
 
 l2 = 0
 filename = "Getting_Started_Reordered.csv"
@@ -46,50 +48,22 @@ orig_present_points = np.array(np.where(orig_mask)).T
 
 
 
-# Create train tensors
-train_tensor = np.copy(data_tensor)
+# Decompose and reconstruct the tensor
+initial_tensor = Tensor(filename, is_student_outside=True)
 
-# Optional: assume if student got it right, they get it right every subsequent attempt (rather than empty value)
-for question in train_tensor:
-    for student in question:
-        for attempt_index in range(len(student)):
-            if student[attempt_index] == 1:
-                student[attempt_index:] = [1 for _ in student[attempt_index:]]
-                break
+mask = ~np.isnan(initial_tensor.data_tensor)
+initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
 
-
-mask = ~np.isnan(train_tensor)
-train_tensor = np.nan_to_num(train_tensor)
-
-weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
+weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
 reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
-# Extract prior knowledge (a) and acquired knowledge (b)
-all_extracted_info = []
-all_errors = []
-
-for question_number, question_matrix in enumerate(reconstructed_tensor):
-
-    extracted_info_a = []
-    extracted_info_b = []
-
-    both_extracted = []
-
-    for student in question_matrix:
-
-        X = np.arange(1, len(student) + 1)
-
-        popt, pcov = curve_fit(power_law, X, student, p0=[1, 1], bounds=([0, 0], [1, 1]))
-
-        extracted_info_a.append(popt[0])
-        extracted_info_b.append(popt[1])
-
-        both_extracted.append(list(popt))
+all_extracted_info = extract_prior_and_acquired_knowledge(reconstructed_tensor)
     
+for question_number, question in enumerate(all_extracted_info):
 
 
     plt.figure()
-    plt.scatter(extracted_info_a, extracted_info_b, label='Data', c="blue")
+    plt.scatter(question[0], question[1], label='Data', c="blue")
 
     plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
     plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
