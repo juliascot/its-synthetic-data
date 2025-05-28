@@ -8,6 +8,9 @@ from scipy.special import expit
 from scipy.optimize import curve_fit
 
 l2 = 0
+filename = "Getting_Started_Reordered.csv"
+rank = 6
+
 
 
 # Helper functions
@@ -18,7 +21,6 @@ def power_law(x, a, b):
 
 # Load dataset into 3D array
 
-filename = "Getting_Started_Reordered.csv"
 data = pd.read_csv(filename)
 # print(data.shape)
 
@@ -41,7 +43,6 @@ orig_present_points = np.array(np.where(orig_mask)).T
 
 # Use K-fold cross-validation and ALS to factor the tensor for various ranks
 
-ranks = range(6, 9)
 
 
 
@@ -60,48 +61,42 @@ for question in train_tensor:
 mask = ~np.isnan(train_tensor)
 train_tensor = np.nan_to_num(train_tensor)
 
-# Test on different ranks
-for rank in ranks:
+weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
+reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
-    weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
-    reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
+# Extract prior knowledge (a) and acquired knowledge (b)
+all_extracted_info = []
+all_errors = []
 
-    # Extract prior knowledge (a) and acquired knowledge (b)
-    all_extracted_info = []
-    all_errors = []
+for question_number, question_matrix in enumerate(reconstructed_tensor):
 
-    for question_number, question_matrix in enumerate(reconstructed_tensor):
+    extracted_info_a = []
+    extracted_info_b = []
 
-        extracted_info_a = []
-        extracted_info_b = []
+    both_extracted = []
 
-        both_extracted = []
+    for student in question_matrix:
 
-        for student in question_matrix:
+        X = np.arange(1, len(student) + 1)
 
-            X = np.arange(1, len(student) + 1)
+        popt, pcov = curve_fit(power_law, X, student, p0=[1, 1], bounds=([0, 0], [1, 1]))
 
-            popt, pcov = curve_fit(power_law, X, student, p0=[1, 1], bounds=([0, 0], [1, 1]))
+        extracted_info_a.append(popt[0])
+        extracted_info_b.append(popt[1])
 
-            extracted_info_a.append(popt[0])
-            extracted_info_b.append(popt[1])
-
-            both_extracted.append(list(popt))
-        
+        both_extracted.append(list(popt))
+    
 
 
-        plt.figure()
-        plt.scatter(extracted_info_a, extracted_info_b, label='Data', c="blue")
+    plt.figure()
+    plt.scatter(extracted_info_a, extracted_info_b, label='Data', c="blue")
 
-        plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
-        plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
-        plt.xlabel("$\t{a}$: prior knowledge")
-        plt.ylabel("$\t{b}$: learning rate")
+    plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
+    plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
+    plt.xlabel("$\t{a}$: prior knowledge")
+    plt.ylabel("$\t{b}$: learning rate")
 
-        plt.xlim(0, 1)
-        plt.ylim(0, 1)
-        plt.show()
-
-
-
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.show()
 
