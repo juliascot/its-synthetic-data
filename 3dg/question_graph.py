@@ -21,31 +21,6 @@ def power_law(x, a, b):
     return a * np.power(x, b)
 
 
-# Load dataset into 3D array
-
-data = pd.read_csv(filename)
-# print(data.shape)
-
-num_learners = data['Student_Id'].nunique()
-num_questions = data['Question_Id'].nunique()
-num_attempts = data['Attempt_Count'].nunique()
-
-shaped_data = np.full((num_questions, num_learners, num_attempts), np.nan)
-
-# Fill in with the data points
-for row in range(len(data.index) - 2): # Subtract 2 to avoid header and start at 0
-    shaped_data[data['Question_Id'][row]-1][data['Student_Id'][row]-1][data['Attempt_Count'][row]-1] = data['Answer_Score'][row]
-
-orig_mask = ~np.isnan(shaped_data)  # True where data is present, False where it is missing
-data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
-orig_present_points = np.array(np.where(orig_mask)).T
-
-
-
-
-# Use K-fold cross-validation and ALS to factor the tensor for various ranks
-
-
 
 
 # Decompose and reconstruct the tensor
