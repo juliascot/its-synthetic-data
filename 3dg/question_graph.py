@@ -23,29 +23,31 @@ def power_law(x, a, b):
 
 
 
-# Decompose and reconstruct the tensor
-initial_tensor = Tensor(filename)
+if __name__ == "__main__":
 
-mask = ~np.isnan(initial_tensor.data_tensor)
-initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
+    # Decompose and reconstruct the tensor
+    initial_tensor = Tensor(filename)
 
-weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
-reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
+    mask = ~np.isnan(initial_tensor.data_tensor)
+    initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
 
-all_extracted_info = extract_prior_and_acquired_knowledge(reconstructed_tensor)
-    
-for question_number, question in enumerate(all_extracted_info):
+    weights, factors = parafac(initial_tensor.data_tensor, rank=rank, mask=mask, l2_reg=l2)
+    reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
+    all_extracted_info = extract_prior_and_acquired_knowledge(reconstructed_tensor)
+        
+    # Graph each question
+    for question_number, question in enumerate(all_extracted_info):
 
-    plt.figure()
-    plt.scatter(question[0], question[1], label='Data', c="blue")
+        plt.figure()
+        plt.scatter(question[0], question[1], label='Data', c="blue")
 
-    plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
-    plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
-    plt.xlabel("$\t{a}$: prior knowledge")
-    plt.ylabel("$\t{b}$: learning rate")
+        plt.suptitle(f'Question {question_number + 1} Learning Curve',fontsize=16, y=0.97)
+        plt.title(f'Across all students, Rank = {rank}, L2 = {l2}', fontsize=8)
+        plt.xlabel("$\t{a}$: prior knowledge")
+        plt.ylabel("$\t{b}$: learning rate")
 
-    plt.xlim(0, 1)
-    plt.ylim(0, 1)
-    plt.show()
+        plt.xlim(0, 1)
+        plt.ylim(0, 1)
+        plt.show()
 
