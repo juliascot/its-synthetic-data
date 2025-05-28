@@ -51,7 +51,7 @@ train_tensor = np.copy(data_tensor)
 # Optional: assume if student got it right, they get it right every subsequent attempt (rather than empty value)
 for question in train_tensor:
     for student in question:
-        for attempt_index in range(len(question)):
+        for attempt_index in range(len(student)):
             if student[attempt_index] == 1:
                 student[attempt_index:] = [1 for _ in student[attempt_index:]]
                 break
