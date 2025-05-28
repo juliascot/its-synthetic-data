@@ -24,7 +24,7 @@ def power_law(x, a, b):
 
 
 # Decompose and reconstruct the tensor
-initial_tensor = Tensor(filename, is_student_outside=True)
+initial_tensor = Tensor(filename)
 
 mask = ~np.isnan(initial_tensor.data_tensor)
 initial_tensor.data_tensor = np.nan_to_num(initial_tensor.data_tensor)
