@@ -68,3 +68,10 @@ def generate_slices(generator, num_slices, noise_dim=100):
         fake_slices = generator(z)
     return fake_slices.squeeze(1)
 
+
+def get_averages(slices: np.ndarray) -> list[float]:
+    avgs = []
+    for slice in slices:
+        avgs.append(np.average(slice))
+    return avgs
+
