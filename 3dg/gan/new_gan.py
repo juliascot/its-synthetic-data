@@ -28,9 +28,9 @@ rank = 5
 pre_reconstruction_augmentation_values = [-2, -1, 1, 2] # Offset first correct attempt on every question by this amount
 post_reconstruction_augmentation_values = [0.9, 1.1] # Multiply the whole reconstructed tensor by these amounts to increase its size
 l2 = 0
-epochs = 40
+epochs = 2
 noise_dimension = 100
-batch_size = 30
+batch_size = 16
 gp_weight = 10.0
 critic_iters_per_gen = 5
 learning_rate = 1e-5
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         overall_gen_losses.append(total_epoch_gen_losses)
 
 
-    new_slices = special_sigmoid_inverse(generate_slices(generator, 30, noise_dimension))
+    new_slices = generate_slices(generator, 30, noise_dimension)
     graph_student_slices(new_slices, epochs, rank, l2)
 
 
