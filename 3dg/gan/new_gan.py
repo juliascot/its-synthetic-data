@@ -24,15 +24,15 @@ from helper_funcs import *
 
 
 filename = "Getting_Started_Reordered.csv"
-rank = 5
-pre_reconstruction_augmentation_values = [-2, -1, 1, 2] # Offset first correct attempt on every question by this amount
+rank = 4
+pre_reconstruction_augmentation_values = [-5, -3, 3, 5] # Offset first correct attempt on every question by this amount
 post_reconstruction_augmentation_values = [0.9, 1.1] # Multiply the whole reconstructed tensor by these amounts to increase its size
 l2 = 0
-epochs = 2
+epochs = 7
 noise_dimension = 100
-batch_size = 16
-gp_weight = 10.0
-critic_iters_per_gen = 5
+batch_size = 20
+gp_weight = 6.0
+critic_iters_per_gen = 2
 learning_rate = 1e-5
 
 generator_optimizer = optim.Adam
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     discriminator = Discriminator().to(device)
 
     wgan = WGAN(generator, discriminator, noise_dimension, device, gp_weight=gp_weight, critic_iters_per_gen=critic_iters_per_gen)
-    wgan.compile(discriminator_optimizer(discriminator.parameters(), learning_rate, (0.0, 0.9)), generator_optimizer(generator.parameters(), learning_rate, (0.0, 0.9)), critic_loss, generator_loss)
+    wgan.compile(discriminator_optimizer(discriminator.parameters(), learning_rate, (0.0, 0.9)), generator_optimizer(generator.parameters(), 1e-4, (0.0, 0.9)), critic_loss, generator_loss)
 
     overall_dis_losses = []
     overall_gen_losses = []
@@ -151,15 +151,17 @@ if __name__ == "__main__":
 
             # print(f'{i}: {discriminator_loss_output}, {generator_loss_output}')
         
-        if epoch % 10 == 0:
-            print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
+        print(f'Critic Loss: {np.mean(total_epoch_dis_losses)}, Generator Loss: {np.mean(total_epoch_gen_losses)}')
 
         overall_dis_losses.append(total_epoch_dis_losses)
         overall_gen_losses.append(total_epoch_gen_losses)
 
 
     new_slices = generate_slices(generator, 30, noise_dimension)
+    print(get_averages(new_slices))
     graph_student_slices(new_slices, epochs, rank, l2)
+    for new_slice in new_slices:
+        graph_student_slices([new_slice])
 
 
 
