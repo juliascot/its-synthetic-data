@@ -66,5 +66,5 @@ def generate_slices(generator, num_slices, noise_dim=100):
     z = torch.randn((num_slices, noise_dim))
     with torch.no_grad():
         fake_slices = generator(z)
-    return fake_slices
+    return fake_slices.squeeze(1)
 
