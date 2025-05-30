@@ -18,7 +18,7 @@ def parse_log_files(folder_path, output_csv="parsed_data.csv"):
     
     # Get all files matching the pattern annotator.*.*
     folder = Path(folder_path)
-    log_files = list(folder.glob("annotator.*.*"))
+    log_files = list(folder.glob("annotate*"))
     
     print(f"Found {len(log_files)} files to process")
     
@@ -96,7 +96,7 @@ def extract_command(command_part):
 # Example usage
 if __name__ == "__main__":
     # Change this to your folder path
-    folder_path = "."  # Current directory, change to your log files folder
-    
+    folder_path = ""    
+
     # Parse the files and create CSV
     parse_log_files(folder_path, "student_commands.csv")
