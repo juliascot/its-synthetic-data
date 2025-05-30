@@ -9,3 +9,9 @@
 # THIRD PASS THROUGH: number the attempts on each milestone according to timestamp (removing commands)
 
 # FOURTH PASS THROUGH: rearrange students for better anonymization
+
+
+
+# First Pass:
+#   go through all of the annotated files, assemble for each person
+#   Obtain timestamps, assign user number, extract commands (could be "gateway:" or "StartingLine:")
