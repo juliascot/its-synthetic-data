@@ -18,7 +18,7 @@ def parse_log_files(folder_path, output_csv="parsed_data.csv"):
     
     # Get all files matching the pattern annotator.*.*
     folder = Path(folder_path)
-    log_files = list(folder)
+    log_files = list(folder.iterdir())
     
     print(f"Found {len(log_files)} files to process")
     
@@ -40,7 +40,7 @@ def parse_log_files(folder_path, output_csv="parsed_data.csv"):
                         if len(parts) >= 7:
                             name = parts[1]  # Second part is the name
                             timestamp = parts[3]  # Fourth part is timestamp
-                            command_part = parts[6]  # Seventh part contains the command
+                            command_part = parts[5]  # Seventh part contains the command
                             
                             # Extract command after "StartingLine:" or "gateway:"
                             command = extract_command(command_part)
