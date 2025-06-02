@@ -18,7 +18,7 @@ def parse_log_files(folder_path, output_csv="parsed_data.csv"):
     
     # Get all files matching the pattern annotator.*.*
     folder = Path(folder_path)
-    log_files = list(folder.glob("annotate*"))
+    log_files = list(folder)
     
     print(f"Found {len(log_files)} files to process")
     
@@ -73,7 +73,7 @@ def parse_log_files(folder_path, output_csv="parsed_data.csv"):
 def extract_command(command_part):
     """
     Extract command from the command part of the log line
-    Looks for text after "StartingLine:" or "gateway:" and before the next "|"
+    Looks for text after "file_wrangler:" and before the next "|"
     
     Args:
         command_part (str): The part of the line containing the command
@@ -84,7 +84,7 @@ def extract_command(command_part):
     
     # Pattern to match "StartingLine:" or "gateway:" followed by the command
     # The command continues until we hit a "|" or end of string
-    pattern = r'(?:StartingLine:|gateway:)([^|]*)'
+    pattern = r'(?:file_wrangler:)([^|]*)'
     
     match = re.search(pattern, command_part)
     if match:
@@ -96,7 +96,7 @@ def extract_command(command_part):
 # Example usage
 if __name__ == "__main__":
     # Change this to your folder path
-    folder_path = ""    
+    folder_path = ""
 
     # Parse the files and create CSV
     parse_log_files(folder_path, "student_commands.csv")
