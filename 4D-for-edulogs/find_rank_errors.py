@@ -32,23 +32,17 @@ def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
                 tensor[student][milestone][2] = 0
     return tensor
 
-def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice, test_indices): # Reports train and test accuracy
+def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice): # Reports train and test accuracy
 
-    correct_test = 0
-    correct_train = 0
-    # num_test_points = len(test_indices)
-    # num_train_points = len(orig_present_points) - num_test_points
+    num_correct = 0
 
-    # for index in range(num_train_points):
-    #     tensor_index = orig_present_points[index]
-    #     if index in test_indices:
-    #         if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
-    #             correct_test += 1
-    #     else:
-    #         if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
-    #             correct_train += 1
+    for i in range(len(orig_achieved_slice)):
+        for j in range(len(orig_achieved_slice[0])):
+            if orig_achieved_slice[i][j] == reconstructed_achieved_slice[i][j]:
+                num_correct += 1
     
-    # return correct_train / num_train_points, correct_test / num_test_points
+    return num_correct/orig_achieved_slice.size
+
 
 def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.ndarray:
     pass
@@ -98,7 +92,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
             else:
                 reconstructed_tensor = stratify_points(reconstructed_tensor)
 
-            train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor, reconstructed_tensor)
+            train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor[:, :, 2], reconstructed_tensor[:, :, 2])
             train_accuracies[rank] = train_accuracy
             test_accuracies[rank] = test_accuracy
 
@@ -117,6 +111,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
         attempt_test_errors[rank] = np.mean(attempt_mse_test_values)**0.5
 
     return timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies
+
 
 def collect_all_errors(orig_tensor_class: Tensor, 
                        ranks: list[int], 
