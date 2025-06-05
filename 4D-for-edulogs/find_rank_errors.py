@@ -68,12 +68,12 @@ def decomp_and_errors(orig_tensor_class: Tensor,
     ) -> tuple[dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float]]:
 
 
-    timestamp_test_errors = {rank: [] for rank in ranks}
-    timestamp_train_errors = {rank: [] for rank in ranks}
-    attempt_train_errors = {rank: [] for rank in ranks}
-    attempt_test_errors = {rank: [] for rank in ranks}
-    train_accuracies = {rank: [] for rank in ranks}
-    test_accuracies = {rank: [] for rank in ranks}
+    timestamp_train_errors = {rank: None for rank in ranks}
+    timestamp_test_errors = {rank: None for rank in ranks}
+    attempt_train_errors = {rank: None for rank in ranks}
+    attempt_test_errors = {rank: None for rank in ranks}
+    train_accuracies = {rank: None for rank in ranks}
+    test_accuracies = {rank: None for rank in ranks}
 
     train_tensor = np.copy(orig_tensor_class.data_tensor)
 
@@ -99,10 +99,24 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                 reconstructed_tensor = stratify_points(reconstructed_tensor)
 
             train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor, reconstructed_tensor)
-            train_accuracies[rank].append(train_accuracy)
-            test_accuracies[rank].append(test_accuracy)
+            train_accuracies[rank] = train_accuracy
+            test_accuracies[rank] = test_accuracy
 
-    pass
+        timestamp_mse_train_values, timestamp_mse_test_values, attempt_mse_train_values, attempt_mse_test_values = [], [], [], []
+        for train_index in train_indices:
+            tensor_train_index = orig_tensor_class.orig_present_points[train_index]
+            timestamp_mse_train_values.append((orig_tensor_class.data_tensor[tensor_train_index[0]][tensor_train_index[1]][0] - reconstructed_tensor[tensor_train_index[0]][tensor_train_index[1]][0]) ** 2)
+            attempt_mse_train_values.append((orig_tensor_class.data_tensor[tensor_train_index[0]][tensor_train_index[1]][1] - reconstructed_tensor[tensor_train_index[0]][tensor_train_index[1]][1]) ** 2)
+        for test_index in test_indices:
+            tensor_test_index = orig_tensor_class.orig_present_points[test_index]
+            timestamp_mse_test_values.append((orig_tensor_class.data_tensor[tensor_test_index[0]][tensor_test_index[1]][0] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][0]) ** 2)
+            attempt_mse_test_values.append((orig_tensor_class.data_tensor[tensor_test_index[0]][tensor_test_index[1]][1] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][1]) ** 2)
+        timestamp_train_errors[rank] = np.mean(timestamp_mse_train_values)**0.5
+        timestamp_test_errors[rank] = np.mean(timestamp_mse_test_values)**0.5
+        attempt_train_errors[rank] = np.mean(attempt_mse_train_values)**0.5
+        attempt_test_errors[rank] = np.mean(attempt_mse_test_values)**0.5
+
+    return timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies
 
 def collect_all_errors(orig_tensor_class: Tensor, 
                        ranks: list[int], 
@@ -125,13 +139,13 @@ def collect_all_errors(orig_tensor_class: Tensor,
     for i in range(n_splits):
         timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies = decomp_and_errors(orig_tensor_class, ranks, all_train_indices[i], all_test_indices[i], is_baseline=is_baseline, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
         for rank in ranks:
-            all_timestamp_train_errors[rank] += timestamp_train_errors
-            all_timestamp_test_errors[rank] += timestamp_test_errors
-            all_attempt_train_errors[rank] += attempt_train_errors
-            all_attempt_test_errors[rank] += attempt_test_errors
+            all_timestamp_train_errors[rank] += timestamp_train_errors[rank]
+            all_timestamp_test_errors[rank] += timestamp_test_errors[rank]
+            all_attempt_train_errors[rank] += attempt_train_errors[rank]
+            all_attempt_test_errors[rank] += attempt_test_errors[rank]
             if not is_baseline:
-                all_train_accuracies[rank] += train_accuracies
-                all_test_accuracies[rank] += test_accuracies
+                all_train_accuracies[rank] += train_accuracies[rank]
+                all_test_accuracies[rank] += test_accuracies[rank]
         for rank in ranks:
             all_timestamp_train_errors[rank] /= n_splits
             all_timestamp_test_errors[rank] /= n_splits
