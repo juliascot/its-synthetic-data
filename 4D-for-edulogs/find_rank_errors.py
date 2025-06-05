@@ -32,7 +32,7 @@ def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
                 tensor[student][milestone][2] = 0
     return tensor
 
-def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice): # Reports train and test accuracy
+def find_accuracy(orig_achieved_slice: np.ndarray, reconstructed_achieved_slice: np.ndarray): # Reports train and test accuracy
 
     num_correct = 0
 
