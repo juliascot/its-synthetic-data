@@ -58,25 +58,35 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       is_baseline: bool = False, 
                       timestamp_cutoff_weight: float = None, 
                       added_timestamp_degree: float = None
-    ):
+    ) -> tuple[float, float]:
+    pass
+
+def collect_all_errors(orig_tensor_class: Tensor, 
+                       ranks: list[int], 
+                       all_train_indicies: np.ndarray, 
+                       all_test_indices: np.ndarray, 
+                       is_baseline: bool = False, 
+                       timestamp_cutoff_weight: float = None, 
+                       added_timestamp_degree: float = None
+    ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
     pass
 
 
 
 if __name__ == "__main__":
 
-    # Put the file into a tensor
-    initial_tensor = Tensor(filename)
+    baseline_tensor = Tensor(filename)
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    all_train_indices, all_test_indices = kf.split(baseline_tensor.orig_present_points)
 
-    # Use K-fold cross-validation and ALS to factor the tensor for various ranks
-    train_errors, test_errors, train_accuracy, test_accuracy = {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}, {rank: [] for rank in ranks}
-    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42) # If the data is too sparse, high ranks will throw errors, 
-    # but we can sometimes get around it by using high n_splits
 
-    average_values = {rank: [] for rank in ranks}
+
+    for timestamp_cutoff_weight in timestamp_cutoff_weights:
+        for added_timestamp_degree in added_timestamp_degrees:
+
 
     counter = 0
-    for train_indices, test_indices in kf.split(initial_tensor.orig_present_points):
+    for train_indices, test_indices in kf.split(example_tensor.orig_present_points):
 
         # Keep track of progress
         print(f"Iteration {counter + 1} out of {n_splits}")
