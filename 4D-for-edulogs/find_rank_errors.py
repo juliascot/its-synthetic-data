@@ -32,6 +32,7 @@ def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
                 tensor[student][milestone][2] = 0
     return tensor
 
+
 def find_accuracy(orig_achieved_slice: np.ndarray, reconstructed_achieved_slice: np.ndarray): # Reports train and test accuracy
 
     num_correct = 0
@@ -52,6 +53,7 @@ def generate_completed_milestone_values(tensor: np.ndarray, max_time: float) -> 
     pass
 
 
+
 def decomp_and_errors(orig_tensor_class: Tensor,
                       ranks: list[int], 
                       train_indices: np.ndarray, 
@@ -60,7 +62,6 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       timestamp_cutoff_weight: float = None, 
                       added_timestamp_degree: float = None
     ) -> tuple[dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float]]:
-
 
     timestamp_train_errors = {rank: None for rank in ranks}
     timestamp_test_errors = {rank: None for rank in ranks}
@@ -113,6 +114,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
     return timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies
 
 
+
 def collect_all_errors(orig_tensor_class: Tensor, 
                        ranks: list[int], 
                        all_train_indices: np.ndarray, 
@@ -150,7 +152,6 @@ def collect_all_errors(orig_tensor_class: Tensor,
                 all_train_accuracies[rank] /= n_splits
                 all_test_accuracies[rank] /= n_splits
     
-
     if should_print_after:
         print(f"  Timestamp Train Errors: {all_timestamp_train_errors}")
         print(f"  Timestamp Test Errors: {all_timestamp_test_errors}")
