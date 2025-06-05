@@ -70,7 +70,7 @@ def collect_all_errors(orig_tensor_class: Tensor,
                        timestamp_cutoff_weight: float = None, 
                        added_timestamp_degree: float = None,
                        should_print_after: bool = True
-    ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
+    ) -> tuple[dict[int, float], dict[int, float], dict[int, float], dict[int, float], dict[int, float], dict[int, float]]:
 
     all_timestamp_train_errors = {rank: 0 for rank in ranks}
     all_timestamp_test_errors = {rank: 0 for rank in ranks}
@@ -98,7 +98,6 @@ def collect_all_errors(orig_tensor_class: Tensor,
                 all_train_accuracies[rank] /= n_splits
                 all_test_accuracies[rank] /= n_splits
     
-    # Divide totals by n_splits
 
     if should_print_after:
         print(f"  Timestamp Train Errors: {all_timestamp_train_errors}")
