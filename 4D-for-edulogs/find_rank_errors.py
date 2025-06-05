@@ -23,12 +23,11 @@ n_splits = 30 # The k in k-fold cross-validation
 
 def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
     for student in range(len(tensor)):
-        for question in range(len(tensor[0])):
-            for attempt in range(len(tensor[0][0])):
-                if tensor[student][question][attempt] >= 0.5:
-                    tensor[student][question][attempt] = 1
-                else:
-                    tensor[student][question][attempt] = 0
+        for milestone in range(len(tensor[0])):
+            if tensor[student][milestone][2] >= 0.5:
+                tensor[student][milestone][2] = 1
+            else:
+                tensor[student][milestone][2] = 0
     return tensor
 
 def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_points): # Reports train and test accuracy
