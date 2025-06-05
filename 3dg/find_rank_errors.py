@@ -118,8 +118,8 @@ if __name__ == "__main__":
                 tensor_test_index = initial_tensor.orig_present_points[train_index]
                 mse_train_values.append((initial_tensor.data_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]] - reconstructed_tensor[tensor_test_index[0]][tensor_test_index[1]][tensor_test_index[2]]) ** 2)
 
-            train_mse = np.mean(mse_train_values)
-            test_mse = np.mean(mse_test_values)
+            train_mse = np.mean(mse_train_values)**0.5
+            test_mse = np.mean(mse_test_values)**0.5
 
             train_errors[rank].append(train_mse)
             test_errors[rank].append(test_mse)
