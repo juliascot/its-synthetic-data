@@ -67,8 +67,16 @@ def collect_all_errors(orig_tensor_class: Tensor,
                        all_test_indices: np.ndarray, 
                        is_baseline: bool = False, 
                        timestamp_cutoff_weight: float = None, 
-                       added_timestamp_degree: float = None
+                       added_timestamp_degree: float = None,
+                       should_print_after: bool = True
     ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
+
+
+
+    if should_print_after:
+        print(f"Timestamp Errors: {timestamp_errors}")
+        print(f"Attempt Errors: {attempt_errors}")
+        print(f"Milestone Attempted Accuracy: {None if milestone_attempted_accuracy is None else milestone_attempted_accuracy}")
     pass
 
 
@@ -81,8 +89,11 @@ if __name__ == "__main__":
 
 
 
+
+
     for timestamp_cutoff_weight in timestamp_cutoff_weights:
         for added_timestamp_degree in added_timestamp_degrees:
+            timestamp_errors, attempt_errors, milestone_attempted_accuracy = collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
 
 
     counter = 0
