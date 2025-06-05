@@ -58,7 +58,11 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       is_baseline: bool = False, 
                       timestamp_cutoff_weight: float = None, 
                       added_timestamp_degree: float = None
-    ) -> tuple[float, float, float, float, float, float]:
+    ) -> tuple[dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float]]:
+
+
+
+
     pass
 
 def collect_all_errors(orig_tensor_class: Tensor, 
