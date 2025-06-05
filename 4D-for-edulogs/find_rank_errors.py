@@ -72,16 +72,32 @@ def collect_all_errors(orig_tensor_class: Tensor,
                        should_print_after: bool = True
     ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
 
-    all_timestamp_train_errors = {rank: [] for rank in ranks}
-    all_timestamp_test_errors = {rank: [] for rank in ranks}
-    all_attempt_train_errors = {rank: [] for rank in ranks}
-    all_attempt_test_errors = {rank: [] for rank in ranks}
-    all_train_accuracies = {rank: [] for rank in ranks}
-    all_test_accuracies = {rank: [] for rank in ranks}
+    all_timestamp_train_errors = {rank: 0 for rank in ranks}
+    all_timestamp_test_errors = {rank: 0 for rank in ranks}
+    all_attempt_train_errors = {rank: 0 for rank in ranks}
+    all_attempt_test_errors = {rank: 0 for rank in ranks}
+    all_train_accuracies = {rank: 0 for rank in ranks}
+    all_test_accuracies = {rank: 0 for rank in ranks}
 
-    # for all k train/test groups:
-    timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies = decomp_and_errors(orig_tensor_class, ranks, train_indices, test_indices, is_baseline=is_baseline, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
-    # Add the results to the totals
+    for i in range(n_splits):
+        timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies = decomp_and_errors(orig_tensor_class, ranks, all_train_indices[i], all_test_indices[i], is_baseline=is_baseline, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
+        for rank in ranks:
+            all_timestamp_train_errors[rank] += timestamp_train_errors
+            all_timestamp_test_errors[rank] += timestamp_test_errors
+            all_attempt_train_errors[rank] += attempt_train_errors
+            all_attempt_test_errors[rank] += attempt_test_errors
+            if not is_baseline:
+                all_train_accuracies[rank] += train_accuracies
+                all_test_accuracies[rank] += test_accuracies
+        for rank in ranks:
+            all_timestamp_train_errors[rank] /= n_splits
+            all_timestamp_test_errors[rank] /= n_splits
+            all_attempt_train_errors[rank] /= n_splits
+            all_attempt_test_errors[rank] /= n_splits
+            if not is_baseline:
+                all_train_accuracies[rank] /= n_splits
+                all_test_accuracies[rank] /= n_splits
+    
     # Divide totals by n_splits
 
     if should_print_after:
