@@ -54,6 +54,10 @@ def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.n
     pass
 
 
+def generate_completed_milestone_values(tensor: np.ndarray, max_time: float) -> np.ndarray:
+    pass
+
+
 def decomp_and_errors(orig_tensor_class: Tensor,
                       ranks: list[int], 
                       train_indices: np.ndarray, 
@@ -74,6 +78,15 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 
     mask = ~np.isnan(train_tensor)
     train_tensor = np.nan_to_num(train_tensor)
+
+    for rank in ranks:
+
+        weights, factors = parafac(train_tensor, rank=rank, mask=mask, l2_reg=l2)
+        reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
+
+        if not is_baseline:
+            if timestamp_cutoff_weight is not None:
+                reconstructed_tensor = generate_completed_milestone_values(reconstructed_tensor, orig_tensor_class.max_time)
 
     pass
 
