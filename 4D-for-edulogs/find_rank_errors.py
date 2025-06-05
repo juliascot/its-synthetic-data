@@ -17,6 +17,7 @@ is_stratified = False # Set this to true if we want results to have the data rou
 ranks = range(1, 9)
 l2 = 0 # Regularization -- basically to what degree we ignore potential outliers.
 n_splits = 30 # The k in k-fold cross-validation
+timestamp_cutoff_weight = 1
 
 
 # Helper functions
