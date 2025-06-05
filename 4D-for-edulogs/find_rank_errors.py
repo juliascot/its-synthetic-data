@@ -58,7 +58,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       is_baseline: bool = False, 
                       timestamp_cutoff_weight: float = None, 
                       added_timestamp_degree: float = None
-                      ):
+    ):
     pass
 
 
