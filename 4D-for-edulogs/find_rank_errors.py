@@ -12,7 +12,7 @@ from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
 from tensor import Tensor
 
-filename = ""
+filename = "parsing/file_wrangler_third_pass_results.csv"
 is_stratified = False # Set this to true if we want results to have the data round to zeros or ones (will also print the accuracy)
 ranks = range(1, 9)
 l2 = 0 # Regularization -- basically to what degree we ignore potential outliers.
@@ -100,7 +100,12 @@ if __name__ == "__main__":
 
     baseline_tensor = Tensor(filename)
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
-    all_train_indices, all_test_indices = kf.split(baseline_tensor.orig_present_points)
+    all_train_indices = []
+    all_test_indices = []
+    for train_idx, test_idx in kf.split(baseline_tensor.orig_present_points):
+        all_train_indices.append(train_idx)
+        all_test_indices.append(test_idx)    
+
 
     print("Baseline tensor RMSEs (no modification to identify which milestones are achieved):")
     collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, n_splits, is_baseline=True)
