@@ -67,6 +67,14 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       added_timestamp_degree: float = None
     ) -> tuple[dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float]]:
 
+
+    timestamp_test_errors = {rank: [] for rank in ranks}
+    timestamp_train_errors = {rank: [] for rank in ranks}
+    attempt_train_errors = {rank: [] for rank in ranks}
+    attempt_test_errors = {rank: [] for rank in ranks}
+    train_accuracies = {rank: [] for rank in ranks}
+    test_accuracies = {rank: [] for rank in ranks}
+
     train_tensor = np.copy(orig_tensor_class.data_tensor)
 
     if timestamp_cutoff_weight is not None:
@@ -87,6 +95,12 @@ def decomp_and_errors(orig_tensor_class: Tensor,
         if not is_baseline:
             if timestamp_cutoff_weight is not None:
                 reconstructed_tensor = generate_completed_milestone_values(reconstructed_tensor, orig_tensor_class.max_time)
+            else:
+                reconstructed_tensor = stratify_points(reconstructed_tensor)
+
+            train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor, reconstructed_tensor)
+            train_accuracies[rank].append(train_accuracy)
+            test_accuracies[rank].append(test_accuracy)
 
     pass
 
