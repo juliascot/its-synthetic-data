@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class Tensor:
-    def __init__(self, filename: str, is_student_outside: bool = False, contains_whether_achieved: bool = False) -> None:
+    def __init__(self, filename: str, is_student_outside: bool = True, contains_whether_achieved: bool = False) -> None:
         """
         Tensor class. This will take in the csv file, optionally whether students or milestones are the outside axis, 
         and whether we want to include a slice for whether each milestone was achieved.
