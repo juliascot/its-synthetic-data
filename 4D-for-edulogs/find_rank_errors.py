@@ -50,6 +50,9 @@ def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice, test_indice
     
     # return correct_train / num_train_points, correct_test / num_test_points
 
+def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.ndarray:
+    pass
+
 
 def decomp_and_errors(orig_tensor_class: Tensor,
                       ranks: list[int], 
@@ -60,8 +63,17 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       added_timestamp_degree: float = None
     ) -> tuple[dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float], dict[int: float]]:
 
+    train_tensor = np.copy(orig_tensor_class.data_tensor)
 
+    if timestamp_cutoff_weight is not None:
+        train_tensor = add_extreme_timestamps(train_tensor, added_timestamp_degree * orig_tensor_class.max_time)
 
+    for test_index in test_indices:
+        tensor_test_index = orig_tensor_class.orig_present_points[test_index]
+        train_tensor[tensor_test_index[0], tensor_test_index[1], :] = np.nan
+
+    mask = ~np.isnan(train_tensor)
+    train_tensor = np.nan_to_num(train_tensor)
 
     pass
 
