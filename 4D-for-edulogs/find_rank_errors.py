@@ -32,23 +32,23 @@ def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
                 tensor[student][milestone][2] = 0
     return tensor
 
-def find_accuracy(orig_tensor, constructed_tensor, test_indices, orig_present_points): # Reports train and test accuracy
+def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice, test_indices): # Reports train and test accuracy
 
     correct_test = 0
     correct_train = 0
-    num_test_points = len(test_indices)
-    num_train_points = len(orig_present_points) - num_test_points
+    # num_test_points = len(test_indices)
+    # num_train_points = len(orig_present_points) - num_test_points
 
-    for index in range(num_train_points):
-        tensor_index = orig_present_points[index]
-        if index in test_indices:
-            if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
-                correct_test += 1
-        else:
-            if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
-                correct_train += 1
+    # for index in range(num_train_points):
+    #     tensor_index = orig_present_points[index]
+    #     if index in test_indices:
+    #         if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
+    #             correct_test += 1
+    #     else:
+    #         if orig_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]] == constructed_tensor[tensor_index[0]][tensor_index[1]][tensor_index[2]]:
+    #             correct_train += 1
     
-    return correct_train / num_train_points, correct_test / num_test_points
+    # return correct_train / num_train_points, correct_test / num_test_points
 
 
 
