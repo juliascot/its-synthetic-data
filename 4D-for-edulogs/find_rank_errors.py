@@ -71,12 +71,24 @@ def collect_all_errors(orig_tensor_class: Tensor,
                        should_print_after: bool = True
     ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
 
+    timestamp_train_errors = {rank: [] for rank in ranks}
+    timestamp_test_errors = {rank: [] for rank in ranks}
+    attempt_train_errors = {rank: [] for rank in ranks}
+    attempt_test_errors = {rank: [] for rank in ranks}
+    train_accuracy = {rank: [] for rank in ranks}
+    test_accuracy = {rank: [] for rank in ranks}
+
+
 
 
     if should_print_after:
-        print(f"Timestamp Errors: {timestamp_errors}")
-        print(f"Attempt Errors: {attempt_errors}")
-        print(f"Milestone Attempted Accuracy: {None if milestone_attempted_accuracy is None else milestone_attempted_accuracy}")
+        print(f"  Timestamp Train Errors: {timestamp_train_errors}")
+        print(f"  Timestamp Test Errors: {timestamp_test_errors}")
+        print(f"  Attempt Train Errors: {attempt_train_errors}")
+        print(f"  Attempt Test Errors: {attempt_test_errors}")
+        if not is_baseline:
+            print(f"  Milestone Attempted Train Accuracy: {train_accuracy}")
+            print(f"  Milestone Attempted Test Accuracy: {test_accuracy}")
     pass
 
 
@@ -87,7 +99,6 @@ if __name__ == "__main__":
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
     all_train_indices, all_test_indices = kf.split(baseline_tensor.orig_present_points)
 
-    # For our baseline tensor
     print("Baseline tensor RMSEs (no modification to identify which milestones are achieved):")
     collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, is_baseline=True)
 
