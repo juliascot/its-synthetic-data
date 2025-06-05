@@ -45,5 +45,5 @@ class Tensor:
 
 
         self.orig_present_points = np.array(np.where(~np.isnan(shaped_data[:, :, 0]))).T # a 2D array of coordinates of data points that exist [[0 1] [3 28] ...]
-        self.max_time = max(shaped_data[:, :, 0])
+        self.max_time = np.max(shaped_data[:, :, 0])
         self.data_tensor = tl.tensor(shaped_data, dtype=tl.float32)
