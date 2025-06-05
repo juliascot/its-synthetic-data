@@ -58,37 +58,40 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       is_baseline: bool = False, 
                       timestamp_cutoff_weight: float = None, 
                       added_timestamp_degree: float = None
-    ) -> tuple[float, float]:
+    ) -> tuple[float, float, float, float, float, float]:
     pass
 
 def collect_all_errors(orig_tensor_class: Tensor, 
                        ranks: list[int], 
                        all_train_indices: np.ndarray, 
                        all_test_indices: np.ndarray, 
+                       n_splits: int,
                        is_baseline: bool = False, 
                        timestamp_cutoff_weight: float = None, 
                        added_timestamp_degree: float = None,
                        should_print_after: bool = True
     ) -> tuple[dict[int, float], dict[int, float], dict[int, float]]:
 
-    timestamp_train_errors = {rank: [] for rank in ranks}
-    timestamp_test_errors = {rank: [] for rank in ranks}
-    attempt_train_errors = {rank: [] for rank in ranks}
-    attempt_test_errors = {rank: [] for rank in ranks}
-    train_accuracy = {rank: [] for rank in ranks}
-    test_accuracy = {rank: [] for rank in ranks}
+    all_timestamp_train_errors = {rank: [] for rank in ranks}
+    all_timestamp_test_errors = {rank: [] for rank in ranks}
+    all_attempt_train_errors = {rank: [] for rank in ranks}
+    all_attempt_test_errors = {rank: [] for rank in ranks}
+    all_train_accuracies = {rank: [] for rank in ranks}
+    all_test_accuracies = {rank: [] for rank in ranks}
 
-
-
+    # for all k train/test groups:
+    timestamp_train_errors, timestamp_test_errors, attempt_train_errors, attempt_test_errors, train_accuracies, test_accuracies = decomp_and_errors(orig_tensor_class, ranks, train_indices, test_indices, is_baseline=is_baseline, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
+    # Add the results to the totals
+    # Divide totals by n_splits
 
     if should_print_after:
-        print(f"  Timestamp Train Errors: {timestamp_train_errors}")
-        print(f"  Timestamp Test Errors: {timestamp_test_errors}")
-        print(f"  Attempt Train Errors: {attempt_train_errors}")
-        print(f"  Attempt Test Errors: {attempt_test_errors}")
+        print(f"  Timestamp Train Errors: {all_timestamp_train_errors}")
+        print(f"  Timestamp Test Errors: {all_timestamp_test_errors}")
+        print(f"  Attempt Train Errors: {all_attempt_train_errors}")
+        print(f"  Attempt Test Errors: {all_attempt_test_errors}")
         if not is_baseline:
-            print(f"  Milestone Attempted Train Accuracy: {train_accuracy}")
-            print(f"  Milestone Attempted Test Accuracy: {test_accuracy}")
+            print(f"  Milestone Attempted Train Accuracy: {all_train_accuracies}")
+            print(f"  Milestone Attempted Test Accuracy: {all_test_accuracies}")
     pass
 
 
@@ -100,15 +103,15 @@ if __name__ == "__main__":
     all_train_indices, all_test_indices = kf.split(baseline_tensor.orig_present_points)
 
     print("Baseline tensor RMSEs (no modification to identify which milestones are achieved):")
-    collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, is_baseline=True)
+    collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, n_splits, is_baseline=True)
 
     print("Add extra achieved milestone slice to feature dimension, RMSEs and accuracy:")
-    collect_all_errors(Tensor(filename, contains_whether_achieved=True), ranks, all_train_indices, all_test_indices)
+    collect_all_errors(Tensor(filename, contains_whether_achieved=True), ranks, all_train_indices, all_test_indices, n_splits)
 
 
     for timestamp_cutoff_weight in timestamp_cutoff_weights:
         for added_timestamp_degree in added_timestamp_degrees:
             print(f"RMSEs and Accuracy using timestamp cutoff weight {timestamp_cutoff_weight}, added timestamp degree {added_timestamp_degree}:")
-            collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
+            collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, n_splits, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
 
 
