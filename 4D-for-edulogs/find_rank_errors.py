@@ -17,8 +17,8 @@ is_stratified = False # Set this to true if we want results to have the data rou
 ranks = range(1, 9)
 l2 = 0 # Regularization -- basically to what degree we ignore potential outliers.
 n_splits = 30 # The k in k-fold cross-validation
-timestamp_cutoff_weight = 1 # Multiply the max timestamp by this to produce the cutoff for guessing whether completed milestones from timestamps
-added_timestamp_degree = 1.5 # This is multiplied by the max timestamp to produce the timestamps for unachieved milestones. Used only when adding in new timestamps pre-decomposition
+timestamp_cutoff_weights = [0.9, 1, 1.1] # Multiply the max timestamp by this to produce the cutoff for guessing whether completed milestones from timestamps
+added_timestamp_degrees = [1.2, 1.5, 2] # This is multiplied by the max timestamp to produce the timestamps for unachieved milestones. Used only when adding in new timestamps pre-decomposition
 
 
 # Helper functions
