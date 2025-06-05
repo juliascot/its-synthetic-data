@@ -51,6 +51,10 @@ def find_accuracy(orig_achieved_slice, reconstructed_achieved_slice, test_indice
     # return correct_train / num_train_points, correct_test / num_test_points
 
 
+def decomp_and_errors(orig_tensor_class: Tensor, rank: int, train_indices: np.ndarray, test_indices: np.ndarray, is_baseline: bool = False):
+    pass
+
+
 
 if __name__ == "__main__":
 
