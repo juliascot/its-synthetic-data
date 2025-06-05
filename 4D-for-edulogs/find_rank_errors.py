@@ -87,13 +87,18 @@ if __name__ == "__main__":
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
     all_train_indices, all_test_indices = kf.split(baseline_tensor.orig_present_points)
 
+    # For our baseline tensor
+    print("Baseline tensor RMSEs (no modification to identify which milestones are achieved):")
+    collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, is_baseline=True)
 
-
+    print("Add extra achieved milestone slice to feature dimension, RMSEs and accuracy:")
+    collect_all_errors(Tensor(filename, contains_whether_achieved=True), ranks, all_train_indices, all_test_indices)
 
 
     for timestamp_cutoff_weight in timestamp_cutoff_weights:
         for added_timestamp_degree in added_timestamp_degrees:
-            timestamp_errors, attempt_errors, milestone_attempted_accuracy = collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
+            print(f"RMSEs and Accuracy using timestamp cutoff weight {timestamp_cutoff_weight}, added timestamp degree {added_timestamp_degree}:")
+            collect_all_errors(baseline_tensor, ranks, all_train_indices, all_test_indices, timestamp_cutoff_weight=timestamp_cutoff_weight, added_timestamp_degree=added_timestamp_degree)
 
 
     counter = 0
