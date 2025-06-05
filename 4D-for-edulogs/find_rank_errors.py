@@ -63,7 +63,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 
 def collect_all_errors(orig_tensor_class: Tensor, 
                        ranks: list[int], 
-                       all_train_indicies: np.ndarray, 
+                       all_train_indices: np.ndarray, 
                        all_test_indices: np.ndarray, 
                        is_baseline: bool = False, 
                        timestamp_cutoff_weight: float = None, 
