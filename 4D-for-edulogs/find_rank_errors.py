@@ -82,6 +82,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
     attempt_errors = {rank: None for rank in ranks}
     accuracies = {rank: None for rank in ranks}
     avg_filler_timestamps = {rank: None for rank in ranks}
+    avg_filler_attempts = {rank: None for rank in ranks}
 
     tensor_copy = np.copy(orig_tensor_class.data_tensor)
     orig_milestones_completed = find_completed_milestones(tensor_copy)
@@ -112,6 +113,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 
         absent_timestamps = (orig_milestones_completed == 0)
         avg_filler_timestamps[rank] = np.mean(reconstructed_tensor[:, :, 0][absent_timestamps])
+        avg_filler_attempts[rank] = np.mean(reconstructed_tensor[:, :, 1][absent_timestamps])
 
     if should_print_after:
         print(f"  Timestamp Errors: {timestamp_errors}")
@@ -119,6 +121,8 @@ def decomp_and_errors(orig_tensor_class: Tensor,
         if not is_baseline:
             print(f"  Milestone Attempted Accuracy: {accuracies}")
         print(f"  Average Filler Timestamps: {avg_filler_timestamps}")
+        print(f"  Average Filler Attempts: {avg_filler_attempts}")
+        print("\n")
 
     return timestamp_errors, attempt_errors, accuracies
 
