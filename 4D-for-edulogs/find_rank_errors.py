@@ -58,7 +58,7 @@ def generate_completed_milestone_values_slice(tensor: np.ndarray, max_time: floa
     return completed_milestone_slice
 
 
-def find_completed_milestones(tensor: np.ndarray) -> np.ndarray: # only used when in third case (use timestamps to guess whether milestone was completed)
+def find_completed_milestones(tensor: np.ndarray) -> np.ndarray:
     completed_milestone_slice = np.full((len(tensor), len(tensor[0])), 0)
     for s in range(len(tensor)):
         for m in range(len(tensor[0])):
@@ -81,11 +81,12 @@ def decomp_and_errors(orig_tensor_class: Tensor,
     timestamp_errors = {rank: None for rank in ranks}
     attempt_errors = {rank: None for rank in ranks}
     accuracies = {rank: None for rank in ranks}
+    avg_filler_timestamps = {rank: None for rank in ranks}
 
     tensor_copy = np.copy(orig_tensor_class.data_tensor)
+    orig_milestones_completed = find_completed_milestones(tensor_copy)
 
     if timestamp_cutoff_weight is not None:
-        orig_milestones_completed = find_completed_milestones(tensor_copy)
         tensor_copy = add_extreme_timestamps(tensor_copy, added_timestamp_degree * orig_tensor_class.max_time)
 
     mask = ~np.isnan(tensor_copy)
@@ -109,11 +110,15 @@ def decomp_and_errors(orig_tensor_class: Tensor,
         timestamp_errors[rank] = np.mean((orig_tensor_class.data_tensor[:, :, 0] - reconstructed_tensor[:, :, 0])**2)**0.5
         attempt_errors[rank] = np.mean((orig_tensor_class.data_tensor[:, :, 1] - reconstructed_tensor[:, :, 1])**2)**0.5
 
+        absent_timestamps = (orig_milestones_completed == 0)
+        avg_filler_timestamps[rank] = np.mean(reconstructed_tensor[:, :, 0][absent_timestamps])
+
     if should_print_after:
         print(f"  Timestamp Errors: {timestamp_errors}")
         print(f"  Attempt Errors: {attempt_errors}")
         if not is_baseline:
             print(f"  Milestone Attempted Accuracy: {accuracies}")
+        print(f"  Average Filler Timestamps: {avg_filler_timestamps}")
 
     return timestamp_errors, attempt_errors, accuracies
 
@@ -122,6 +127,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 if __name__ == "__main__":
 
     baseline_tensor = Tensor(filename)
+    print(f"Maximum original timestamp: {baseline_tensor.max_time}")
 
     print("Baseline tensor RMSEs (no modification to identify which milestones are achieved):")
     decomp_and_errors(baseline_tensor, ranks, is_baseline=True)
