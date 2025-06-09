@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class Tensor:
-    def __init__(self, filename: str, is_student_outside: bool = True, contains_whether_achieved: bool = False) -> None:
+    def __init__(self, filename: str, is_student_outside: bool = True) -> None:
         """
         Tensor class. This will take in the csv file, optionally whether students or milestones are the outside axis, 
         and whether we want to include a slice for whether each milestone was achieved.
@@ -31,18 +31,11 @@ class Tensor:
 
         shaped_data = np.full((num_outside, num_middle, 3 if contains_whether_achieved else 2), np.nan)
 
-
         # Fill in with the data points
-
-        if contains_whether_achieved:
-            shaped_data[:, :, 2] = 0
 
         for row in range(len(data.index)):
             shaped_data[data[outside_id][row]][data[middle_id][row]][0] = data['timestamp'][row]
             shaped_data[data[outside_id][row]][data[middle_id][row]][1] = data['attempt'][row]
-            if contains_whether_achieved:
-                shaped_data[data[outside_id][row]][data[middle_id][row]][2] = 1
-
 
         self.orig_present_points = np.array(np.where(~np.isnan(shaped_data[:, :, 0]))).T # a 2D array of coordinates of data points that exist [[0 1] [3 28] ...]
         self.max_time = np.max(shaped_data[:, :, 0])
