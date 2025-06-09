@@ -53,7 +53,13 @@ def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.n
     return tensor
 
 
-def generate_completed_milestone_values(tensor: np.ndarray, max_time: float) -> np.ndarray:
+def generate_completed_milestone_values_slice(tensor: np.ndarray, max_time: float) -> np.ndarray:
+    completed_milestone_slice = np.full((len(tensor), len(tensor[0])), np.nan)
+    
+    pass
+
+
+def find_completed_milestones(tensor: np.ndarray) -> np.ndarray:
     pass
 
 
@@ -77,6 +83,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
     train_tensor = np.copy(orig_tensor_class.data_tensor)
 
     if timestamp_cutoff_weight is not None:
+        orig_milestones_completed = find_completed_milestones(train_tensor)
         train_tensor = add_extreme_timestamps(train_tensor, added_timestamp_degree * orig_tensor_class.max_time)
 
     for test_index in test_indices:
@@ -93,11 +100,12 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 
         if not is_baseline:
             if timestamp_cutoff_weight is not None:
-                reconstructed_tensor = generate_completed_milestone_values(reconstructed_tensor, orig_tensor_class.max_time)
+                completed_milestone_slice = generate_completed_milestone_values_slice(reconstructed_tensor, orig_tensor_class.max_time)
+                train_accuracy, test_accuracy = find_accuracy(orig_milestones_completed, completed_milestone_slice)
             else:
                 reconstructed_tensor = stratify_points(reconstructed_tensor)
+                train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor[:, :, 2], reconstructed_tensor[:, :, 2])
 
-            train_accuracy, test_accuracy = find_accuracy(orig_tensor_class.data_tensor[:, :, 2], reconstructed_tensor[:, :, 2])
             train_accuracies[rank] = train_accuracy
             test_accuracies[rank] = test_accuracy
 
