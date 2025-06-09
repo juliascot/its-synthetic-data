@@ -145,6 +145,8 @@ def collect_all_errors(orig_tensor_class: Tensor,
                        should_print_after: bool = True
     ) -> tuple[dict[int, float], dict[int, float], dict[int, float], dict[int, float], dict[int, float], dict[int, float]]:
 
+    ranks = [rank for rank in ranks if rank <= len(orig_tensor_class.data_tensor[0][0])]
+
     all_timestamp_train_errors = {rank: 0 for rank in ranks}
     all_timestamp_test_errors = {rank: 0 for rank in ranks}
     all_attempt_train_errors = {rank: 0 for rank in ranks}
