@@ -46,7 +46,11 @@ def find_accuracy(orig_achieved_slice: np.ndarray, reconstructed_achieved_slice:
 
 
 def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.ndarray:
-    pass
+    for student in tensor:
+        for milestone in student:
+            if np.isnan(milestone[0]):
+                milestone[0] = extreme_timestamp
+    return tensor
 
 
 def generate_completed_milestone_values(tensor: np.ndarray, max_time: float) -> np.ndarray:
