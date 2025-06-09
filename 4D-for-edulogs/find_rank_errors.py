@@ -107,8 +107,8 @@ def decomp_and_errors(orig_tensor_class: Tensor,
 
             accuracies[rank] = accuracy
 
-        timestamp_errors[rank] = np.mean((orig_tensor_class.data_tensor[:, :, 0] - reconstructed_tensor[:, :, 0])**2)**0.5
-        attempt_errors[rank] = np.mean((orig_tensor_class.data_tensor[:, :, 1] - reconstructed_tensor[:, :, 1])**2)**0.5
+        timestamp_errors[rank] = np.nanmean((orig_tensor_class.data_tensor[:, :, 0] - reconstructed_tensor[:, :, 0])**2)**0.5
+        attempt_errors[rank] = np.nanmean((orig_tensor_class.data_tensor[:, :, 1] - reconstructed_tensor[:, :, 1])**2)**0.5
 
         absent_timestamps = (orig_milestones_completed == 0)
         avg_filler_timestamps[rank] = np.mean(reconstructed_tensor[:, :, 0][absent_timestamps])
