@@ -54,9 +54,12 @@ def add_extreme_timestamps(tensor: np.ndarray, extreme_timestamp: float) -> np.n
 
 
 def generate_completed_milestone_values_slice(tensor: np.ndarray, max_time: float) -> np.ndarray:
-    completed_milestone_slice = np.full((len(tensor), len(tensor[0])), np.nan)
-    
-    pass
+    completed_milestone_slice = np.full((len(tensor), len(tensor[0])), 0)
+    for s in range(len(tensor)):
+        for m in range(len(tensor[0])):
+            if tensor[s][m][0] <= max_time:
+                completed_milestone_slice[s][m] = 1
+    return completed_milestone_slice
 
 
 def find_completed_milestones(tensor: np.ndarray) -> np.ndarray: # only used when in third case (use timestamps to guess whether milestone was completed)
