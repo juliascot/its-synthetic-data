@@ -29,7 +29,7 @@ class Tensor:
             outside_id = 'milestone'
             middle_id = 'student'
 
-        shaped_data = np.full((num_outside, num_middle, 3 if contains_whether_achieved else 2), np.nan)
+        shaped_data = np.full((num_outside, num_middle, 2), np.nan)
 
         # Fill in with the data points
 
