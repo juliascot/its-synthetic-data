@@ -76,7 +76,7 @@ def decomp_and_errors(orig_tensor_class: Tensor,
                       should_print_after: bool = True
     ) -> tuple[dict[int: float], dict[int: float], dict[int: float]]:
 
-    ranks = [rank for rank in ranks if rank <= any(orig_tensor_class.data_tensor.shape)]
+    ranks = [rank for rank in ranks if rank <= min(orig_tensor_class.data_tensor.shape)]
 
     timestamp_errors = {rank: None for rank in ranks}
     attempt_errors = {rank: None for rank in ranks}
