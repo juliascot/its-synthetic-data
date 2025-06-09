@@ -7,7 +7,6 @@ Set desired filename, is_stratified, ranks, l2 (within parafac call), and n_spli
 
 import numpy as np
 import tensorly as tl
-import pandas as pd
 from tensorly.decomposition import parafac
 from sklearn.model_selection import KFold
 from tensor import Tensor
