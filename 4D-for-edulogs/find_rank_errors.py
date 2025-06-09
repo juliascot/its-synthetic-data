@@ -59,7 +59,7 @@ def generate_completed_milestone_values_slice(tensor: np.ndarray, max_time: floa
     pass
 
 
-def find_completed_milestones(tensor: np.ndarray) -> np.ndarray:
+def find_completed_milestones(tensor: np.ndarray) -> np.ndarray: # only used when in third case (use timestamps to guess whether milestone was completed)
     completed_milestone_slice = np.full((len(tensor), len(tensor[0])), 0)
     for s in range(len(tensor)):
         for m in range(len(tensor[0])):
