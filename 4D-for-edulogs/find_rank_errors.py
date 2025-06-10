@@ -99,14 +99,8 @@ def decomp_and_errors(orig_tensor_class: Tensor,
         reconstructed_tensor = tl.kruskal_to_tensor((weights, factors))
 
         if not is_baseline:
-            if timestamp_cutoff_weight is not None:
-                completed_milestone_slice = generate_completed_milestone_values_slice(reconstructed_tensor, orig_tensor_class.max_time)
-                accuracy = find_accuracy(orig_milestones_completed, completed_milestone_slice)
-            else:
-                reconstructed_tensor = stratify_points(reconstructed_tensor)
-                accuracy = find_accuracy(orig_tensor_class.data_tensor[:, :, 2], reconstructed_tensor[:, :, 2])
-
-            accuracies[rank] = accuracy
+            completed_milestone_slice = generate_completed_milestone_values_slice(reconstructed_tensor, orig_tensor_class.max_time * timestamp_cutoff_weight)
+            accuracies[rank] = find_accuracy(orig_milestones_completed, completed_milestone_slice)
 
         timestamp_errors[rank] = np.nanmean((orig_tensor_class.data_tensor[:, :, 0] - reconstructed_tensor[:, :, 0])**2)**0.5
         attempt_errors[rank] = np.nanmean((orig_tensor_class.data_tensor[:, :, 1] - reconstructed_tensor[:, :, 1])**2)**0.5
