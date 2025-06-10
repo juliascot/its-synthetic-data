@@ -30,14 +30,11 @@ def stratify_points(tensor): # Makes points 0 or 1 -- only for 3-way tensors
 
 
 def find_accuracy(orig_achieved_slice: np.ndarray, reconstructed_achieved_slice: np.ndarray): # Reports train and test accuracy
-
     num_correct = 0
-
     for i in range(len(orig_achieved_slice)):
         for j in range(len(orig_achieved_slice[0])):
             if orig_achieved_slice[i][j] == reconstructed_achieved_slice[i][j]:
                 num_correct += 1
-    
     return num_correct/orig_achieved_slice.size
 
 
